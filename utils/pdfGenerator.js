@@ -11,8 +11,64 @@ const { v4: uuidv4 } = require('uuid');
 function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage = null, isSigned = false) {
     let filled = templateHtml;
 
-    // Replace all placeholders with actual data
+    // Format current date/time for printed timestamp
+    const now = new Date();
+    const printedOn = now.toLocaleString('en-GB', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit',
+        hour12: false 
+    }).replace(',', '');
+
+    
+
+    // Calculate total pages FIRST (before creating placeholders)
+    // Always assume at least 2 pages (page 1 approval + page 2 crew)
+    let totalPages = 2;
+    let numAdditionalPages = 0;
+    
+    if (formData.CREW_MEMBERS && Array.isArray(formData.CREW_MEMBERS)) {
+        const totalCrew = formData.CREW_MEMBERS.length;
+        const crewPerFirstPage = 15;
+        const crewPerAdditionalPage = 15;
+        
+        // Calculate additional pages only if crew exceeds first page capacity
+        if (totalCrew > crewPerFirstPage) {
+            numAdditionalPages = Math.ceil((totalCrew - crewPerFirstPage) / crewPerAdditionalPage);
+            totalPages = 2 + numAdditionalPages;
+        }
+        // If <= 15 crew: totalPages stays at 2
+    }
+
+    // NOW create placeholders object (can reference totalPages)
     const placeholders = {
+        // Sail Certificate specific fields
+        'CERTIFICATE_NUMBER': formData.CERTIFICATE_NUMBER || '',
+        'VESSEL_NAME': formData.VESSEL_NAME || '',
+        'VESSEL_NAME_AR': formData.VESSEL_NAME_AR || '',
+        'VESSEL_NATIONALITY': formData.VESSEL_NATIONALITY || '',
+        'VESSEL_NATIONALITY_AR': formData.VESSEL_NATIONALITY_AR || '',
+        'FLAG': formData.FLAG || '',
+        'FLAG_AR': formData.FLAG_AR || '',
+        'VESSEL_AGENT_NAME': formData.VESSEL_AGENT_NAME || '',
+        'VESSEL_AGENT_NAME_AR': formData.VESSEL_AGENT_NAME_AR || '',
+        'PORT_OF_DEPARTURE': formData.PORT_OF_DEPARTURE || '',
+        'PORT_OF_DEPARTURE_AR': formData.PORT_OF_DEPARTURE_AR || '',
+        'NEXT_PORT_OF_CALL': formData.NEXT_PORT_OF_CALL || '',
+        'NEXT_PORT_OF_CALL_AR': formData.NEXT_PORT_OF_CALL_AR || '',
+        'VOYAGE_NUMBER': formData.VOYAGE_NUMBER || '',
+        'CAPTAIN_NAME': formData.CAPTAIN_NAME || '',
+        'CAPTAIN_NAME_AR': formData.CAPTAIN_NAME_AR || '',
+        'ETD': formData.ETD || '',
+        'CUSTOMS_REMARKS': formData.CUSTOMS_REMARKS || '',
+        'ISSUANCE_DATE': formData.ISSUANCE_DATE || '',
+        'PRINTED_ON': formData.PRINTED_ON || printedOn,
+        'IMO_NUMBER': formData.IMO_NUMBER || '',
+        'TOTAL_PAGES_COUNT': totalPages.toString(),
+        
+        // Legacy fields (kept for backward compatibility)
         'MARINE_AFFAIRS_NO': formData.MARINE_AFFAIRS_NO || '',
         'MARINE_AFFAIRS_NO_FA': formData.MARINE_AFFAIRS_NO_FA || '',
         'SERIAL_NO': formData.SERIAL_NO || '',
@@ -25,7 +81,6 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
         'CUSTOM_LEAVE_NO_FA': formData.CUSTOM_LEAVE_NO_FA || '',
         'AGENT': formData.AGENT || '',
         'AGENT_FA': formData.AGENT_FA || '',
-        'VESSEL_NAME': formData.VESSEL_NAME || '',
         'VESSEL_NAME_FA': formData.VESSEL_NAME_FA || '',
         'ARRIVED_FROM': formData.ARRIVED_FROM || '',
         'ARRIVED_FROM_FA': formData.ARRIVED_FROM_FA || '',
@@ -49,11 +104,167 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
         'PORT_FA': formData.PORT_FA || ''
     };
 
-    // Replace all placeholders
+    // Handle crew members with smart pagination BEFORE replacing main placeholders
+    if (formData.CREW_MEMBERS && Array.isArray(formData.CREW_MEMBERS)) {
+        const totalCrew = formData.CREW_MEMBERS.length;
+        const crewPerFirstPage = 10;
+        const crewPerAdditionalPage = 10;
+        
+        // Generate crew HTML for page 2 (first page with crew)
+        let crewHtml = '';
+        const firstPageEnd = Math.min(crewPerFirstPage, totalCrew);
+        
+        for (let i = 0; i < firstPageEnd; i++) {
+            const crew = formData.CREW_MEMBERS[i];
+            crewHtml += `
+            <!-- Row ${i + 1} -->
+            <tr>
+              <td rowspan="2" class="text-center crew-cell">${i + 1}</td>
+              <td rowspan="2" class="text-center crew-cell rtl">${crew.nameAr || ''}</td>
+              <td class="text-center crew-cell">${crew.positionEn || ''}</td>
+              <td class="text-center crew-cell">${crew.nationalityEn || ''}</td>
+              <td rowspan="2" class="text-center crew-cell">${crew.dateOfBirth || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-right">${crew.travelDocRef || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${crew.dateOfIssue || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${crew.dateOfExpiry || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-left">${crew.seamanBook || ''}</td>
+            </tr>
+            <tr>
+              <td class="text-center crew-cell rtl">${crew.positionAr || ''}</td>
+              <td class="text-center crew-cell rtl">${crew.nationalityAr || ''}</td>
+            </tr>
+            `;
+        }
+        
+        // Replace the crew members placeholder on page 2
+        filled = filled.replace(/{{CREW_MEMBERS}}/g, crewHtml);
+        
+        // If there are more crew members, add additional pages
+        if (totalCrew > crewPerFirstPage) {
+            let additionalPages = '';
+            
+            for (let pageIdx = 0; pageIdx < numAdditionalPages; pageIdx++) {
+                const startIdx = crewPerFirstPage + (pageIdx * crewPerAdditionalPage);
+                const endIdx = Math.min(startIdx + crewPerAdditionalPage, totalCrew);
+                let pageCrewHtml = '';
+                
+                // Build crew rows for this page
+                for (let i = startIdx; i < endIdx; i++) {
+                    const crew = formData.CREW_MEMBERS[i];
+                    pageCrewHtml += `
+            <!-- Row ${i + 1} -->
+            <tr>
+              <td rowspan="2" class="text-center crew-cell">${i + 1}</td>
+              <td rowspan="2" class="text-center crew-cell rtl">${crew.nameAr || ''}</td>
+              <td class="text-center crew-cell">${crew.positionEn || ''}</td>
+              <td class="text-center crew-cell">${crew.nationalityEn || ''}</td>
+              <td rowspan="2" class="text-center crew-cell">${crew.dateOfBirth || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-right">${crew.travelDocRef || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${crew.dateOfIssue || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${crew.dateOfExpiry || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-left">${crew.seamanBook || ''}</td>
+            </tr>
+            <tr>
+              <td class="text-center crew-cell rtl">${crew.positionAr || ''}</td>
+              <td class="text-center crew-cell rtl">${crew.nationalityAr || ''}</td>
+            </tr>
+            `;
+                }
+                
+                // Calculate page number: page 3 is the first additional page (pageIdx=0), page 4 is pageIdx=1, etc.
+                const pageNumber = 3 + pageIdx;
+                
+                additionalPages += `
+    <!-- Page Break -->
+    <div class="page-break"></div>
+
+    <!-- Additional Crew Page ${pageNumber} of ${totalPages} -->
+    <div class="page-wrapper">
+        <!-- Crew Table -->
+        <table class="table-main" style="margin-bottom: 60px;">
+          <thead>
+            <tr>
+              <td class="col-w-seq">
+                <p class="crew-header rtl text-center">تسلسل</p>
+                <p class="crew-subheader">SEQ NO.</p>
+              </td>
+              <td class="col-w-name">
+                <p class="crew-header rtl text-center">الاسم</p>
+                <p class="crew-subheader text-center">NAME</p>
+              </td>
+              <td class="col-w-pos">
+                <p class="crew-header rtl text-center">المنصب</p>
+                <p class="crew-subheader text-center">POSITION</p>
+              </td>
+              <td class="col-w-nat">
+                <p class="crew-header rtl text-center">الجنسية</p>
+                <p class="crew-subheader text-center">NATIONALITY</p>
+              </td>
+              <td class="col-w-dob">
+                <p class="crew-header rtl text-center">تاريخ الميلاد</p>
+                <p class="crew-subheader">DATE OF BIRTH</p>
+              </td>
+              <td class="col-w-doc td-thick-right">
+                <p class="crew-header rtl text-center">رقم وثيقة السفر</p>
+                <p class="crew-subheader">TRAVEL DOC REF NO.</p>
+              </td>
+              <td class="col-w-iss td-thick-right td-thick-left">
+                <p class="crew-header rtl text-center">تاريخ الاصدار</p>
+                <p class="crew-subheader text-center">DATE OF ISSUE</p>
+              </td>
+              <td class="col-w-exp td-thick-right td-thick-left">
+                <p class="crew-header rtl text-center">تاريخ الانتهاء</p>
+                <p class="crew-subheader text-center">DATE OF EXPIRY</p>
+              </td>
+              <td class="col-w-id td-thick-left">
+                <p class="crew-header rtl">رقم الهوية (البحرية)</p>
+                <p class="crew-subheader">SEAMAN BOOK</p>
+              </td>
+            </tr>
+          </thead>
+          <tbody>
+            ${pageCrewHtml}
+          </tbody>
+        </table>
+<div class="footer" style="margin-top: 100px;">
+          <div class="footer-info">
+
+            <h3>Printed on:</h3>
+            <h3>${placeholders.PRINTED_ON}</h3>
+
+            <h3>Computer Generated Report No Signature Required</h3>
+            <h3>${placeholders.PRINTED_ON}</h3>
+            <p class="text-right rtl" style="font-size: var(--fs-base);">تم الطباعة بتاريخ:</p>
+
+          </div>
+          <div style="border-bottom: 1px solid #000; margin: 0px 7.5px 5px 7.5px;"></div>
+          <div class="footer-info">
+            <span style="font-size: var(--fs-base);"><strong>Page</strong> ${pageNumber} of ${totalPages}</span>
+            <span style="font-size: var(--fs-md); font-weight: 400;" class="rtl">صفحة ${pageNumber} من ${totalPages}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+        `;
+            }
+            
+            // Insert additional pages before closing </body> tag
+            const bodyClosingIndex = filled.indexOf('</body>');
+            if (bodyClosingIndex !== -1) {
+                filled = filled.substring(0, bodyClosingIndex) + additionalPages + '\n' + filled.substring(bodyClosingIndex);
+            }
+        }
+    } else {
+        // If no crew members, replace with empty string
+        filled = filled.replace(/{{CREW_MEMBERS}}/g, '');
+    }
+
+    // NOW replace all remaining placeholders with actual data
     for (const [key, value] of Object.entries(placeholders)) {
         const regex = new RegExp(`{{${key}}}`, 'g');
         filled = filled.replace(regex, value);
     }
+
 
     // Replace QR Code URL if provided
     if (qrCodeUrl) {
@@ -85,7 +296,92 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
     // Clean up any leftover IS_SIGNED references
     filled = filled.replace(/{{IS_SIGNED}}/g, isSigned ? 'true' : '');
 
+    // ===== FOOTER ENHANCEMENT: Inject page numbers dynamically =====
+    // This ensures all pages (1, 2, and 3+) have proper page numbering in footers
+    
+    // Replace footer page number placeholders with actual page numbers
+    // Handles both <strong>Page</strong> formatting and plain text
+    
+    // Page 1 footer: "<strong>Page</strong> 1 of {totalPages}" or "Page 1 of {totalPages}"
+    filled = filled.replace(/<strong>Page<\/strong>\s+1\s+of\s+{{TOTAL_PAGES_COUNT}}/g, `<strong>Page</strong> 1 of ${totalPages}`);
+    filled = filled.replace(/([^<]|^)Page\s+1\s+of\s+{{TOTAL_PAGES_COUNT}}/g, `$1Page 1 of ${totalPages}`);
+    
+    // Page 2 footer: "<strong>Page</strong> 2 of {totalPages}" or "Page 2 of {totalPages}"
+    filled = filled.replace(/<strong>Page<\/strong>\s+2\s+of\s+{{TOTAL_PAGES_COUNT}}/g, `<strong>Page</strong> 2 of ${totalPages}`);
+    filled = filled.replace(/([^<]|^)Page\s+2\s+of\s+{{TOTAL_PAGES_COUNT}}/g, `$1Page 2 of ${totalPages}`);
+    
+    // For bilingual Arabic footers (if present)
+    // "صفحة 1 من {{TOTAL_PAGES_COUNT}}" -> "صفحة 1 من X"
+    filled = filled.replace(/صفحة\s+1\s+من\s+{{TOTAL_PAGES_COUNT}}/g, `صفحة 1 من ${totalPages}`);
+    filled = filled.replace(/صفحة\s+2\s+من\s+{{TOTAL_PAGES_COUNT}}/g, `صفحة 2 من ${totalPages}`);
+    
+    // Additional pages (3+) already use template literals, but ensure they're correct
+    // Replace any remaining {{TOTAL_PAGES_COUNT}} in additional pages
+    filled = filled.replace(/{{TOTAL_PAGES_COUNT}}/g, totalPages.toString());
+
     return filled;
+}
+
+/**
+ * Embed all local images found in HTML as Base64
+ */
+async function embedAllImages(html, baseDir) {
+    let updatedHtml = html;
+    // Regex to find img tags with src attribute
+    // Capture group 1: the full src attribute value
+    const imgRegex = /<img[^>]+src="([^">]+)"/g;
+    
+    let match;
+    // We need to collect matches first to avoid infinite loops if we replace them
+    const matches = [];
+    while ((match = imgRegex.exec(html)) !== null) {
+        matches.push(match[1]);
+    }
+    
+    // Process unique matches
+    const uniqueSources = [...new Set(matches)];
+    
+    for (const src of uniqueSources) {
+        // Skip if already base64 or remote URL
+        if (src.startsWith('data:') || src.startsWith('http://') || src.startsWith('https://')) {
+            continue;
+        }
+        
+        try {
+            // Construct absolute path
+            // The template uses paths relative to project root usually
+            const imagePath = path.join(baseDir, src);
+            
+            // Check if file exists
+            try {
+                await fs.access(imagePath);
+            } catch (e) {
+                console.warn(`Image file not found: ${imagePath}, skipping embedding.`);
+                continue;
+            }
+            
+            // Determine mime type based on extension
+            const ext = path.extname(src).toLowerCase();
+            let mimeType = 'image/png'; // Default
+            if (ext === '.jpg' || ext === '.jpeg') mimeType = 'image/jpeg';
+            else if (ext === '.svg') mimeType = 'image/svg+xml';
+            
+            // Read file
+            const imgBuffer = await fs.readFile(imagePath);
+            const base64Data = imgBuffer.toString('base64');
+            const dataUri = `data:${mimeType};base64,${base64Data}`;
+            
+            // Replace all occurrences in HTML
+            // global replacement
+            updatedHtml = updatedHtml.split(`src="${src}"`).join(`src="${dataUri}"`);
+            console.log(`Embedded image: ${src}`);
+            
+        } catch (error) {
+            console.error(`Failed to embed image ${src}: ${error.message}`);
+        }
+    }
+    
+    return updatedHtml;
 }
 
 /**
@@ -172,18 +468,19 @@ async function generateTempPDF(htmlContent, outputPath) {
         });
         
         await page.pdf({
-            path: outputPath,
-            format: 'A4',
-            printBackground: true,
-            preferCSSPageSize: false,
-            margin: {
-                top: '5mm',
-                right: '5mm',
-                bottom: '5mm',
-                left: '5mm'
-            },
-            scale: 0.92
-        });
+    path: outputPath,
+    format: 'A4',
+    printBackground: true,
+    preferCSSPageSize: false,
+    displayHeaderFooter: true,
+    margin: {
+        top: '5mm',
+        right: '5mm',
+        bottom: '5mm',
+        left: '5mm'
+    },
+    scale: 0.92
+});
 
         console.log('PDF generated successfully');
     } catch (error) {
@@ -210,16 +507,25 @@ async function generatePortClearancePDF(formData, baseUrl) {
     const finalPdfPath = path.join(storageDir, filename);
     const qrCodePath = path.join(tempDir, `qr-${uniqueId}.png`);
 
+    
+
     try {
         // Step 1: Read template
         const templateHtml = await fs.readFile(templatePath, 'utf-8');
 
-        // Step 2: Generate PDF URL (where the final PDF will be hosted)
+        // Step 2: Generate PDF URL and Validation URL
         const pdfUrl = `${baseUrl}/pdfs/${filename}`;
+        
+        // Extract the raw cert name without the .pdf extension
+        const uniqueId = formData.SERIAL_NO || filename.replace('port-clearance-', '').replace('.pdf', '');
+        
+        // Clean BASE_URL to prevent double slashes before adding route
+        const cleanBaseUrl = baseUrl.replace(/\/$/, '');
+        const validationUrl = `${cleanBaseUrl}/view/${encodeURIComponent(uniqueId)}`;
 
-        // Step 3: Generate QR code as file
-        await generateQRCode(pdfUrl, qrCodePath);
-        console.log('QR Code generated for URL:', pdfUrl);
+        // Step 3: Generate QR code as file pointing to the /view/:cert route
+        await generateQRCode(validationUrl, qrCodePath);
+        console.log('QR Code generated for URL:', validationUrl);
 
         // Step 4: Read QR as base64
         const qrBuffer = await fs.readFile(qrCodePath);
@@ -235,7 +541,6 @@ async function generatePortClearancePDF(formData, baseUrl) {
             console.log('Signature image loaded successfully');
         } catch (error) {
             console.log('No signature image found, using placeholder');
-            // Use a default/placeholder if signature file doesn't exist
             signatureBase64 = '';
         }
 
@@ -248,14 +553,21 @@ async function generatePortClearancePDF(formData, baseUrl) {
         }
         console.log('QR Code successfully embedded in HTML template');
 
+        // Step 5.5: Embed all other local images
+        const projectRoot = path.join(__dirname, '..');
+        const finalHtml = await embedAllImages(filledHtml, projectRoot);
+
         // Step 6: Generate final PDF with QR code
-        await generateTempPDF(filledHtml, finalPdfPath);
+        await generateTempPDF(finalHtml, finalPdfPath);
 
         // Clean up QR file
         try {
             await fs.unlink(qrCodePath);
         } catch (e) {
-            // Ignore
+            try {
+                 // Retry cleanup if needed or ignore
+                 console.log('Cleanup qr code success');
+            } catch (err) {}
         }
 
         console.log('Port Clearance PDF generated successfully:', filename);
@@ -279,6 +591,8 @@ async function generatePortClearancePDF(formData, baseUrl) {
         throw new Error(`Failed to generate Port Clearance PDF: ${error.message}`);
     }
 }
+
+// s
 
 module.exports = {
     generatePortClearancePDF

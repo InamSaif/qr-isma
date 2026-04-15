@@ -166,6 +166,15 @@ app.get('/dashboard', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
 
+// Serve frontend page for QR Certificate Validation without relying on express.static strictly
+app.get('/view/:cerId', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'view.html'));
+});
+
+app.get('/view', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'view.html'));
+});
+
 // Start server
 const startServer = async () => {
     await setupDirectories();

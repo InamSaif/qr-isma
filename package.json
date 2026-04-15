@@ -1,5 +1,5 @@
 {
-  "name": "qr-engine",
+  "name": "qr-engine-2",
   "version": "1.0.0",
   "description": "QR Code Embedded PDF System with Port Clearance Form Generation",
   "main": "server.js",

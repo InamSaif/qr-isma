@@ -79,24 +79,27 @@ exports.createDocument = async (req, res) => {
         const formData = req.body;
         const BASE_URL = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
 
+        // Use CERTIFICATE_NUMBER as serial number if SERIAL_NO is not provided
+        const serialNo = formData.SERIAL_NO || formData.CERTIFICATE_NUMBER;
+        
         // Validate required field
-        if (!formData.SERIAL_NO) {
+        if (!serialNo) {
             return res.status(400).json({
                 success: false,
-                error: 'SERIAL_NO is required'
+                error: 'Either SERIAL_NO or CERTIFICATE_NUMBER is required'
             });
         }
 
         // Check if serial number already exists
         const existingDoc = await Document.findOne({ 
-            serialNo: formData.SERIAL_NO,
+            serialNo: serialNo,
             status: { $ne: 'deleted' }
         });
 
         if (existingDoc) {
             return res.status(400).json({
                 success: false,
-                error: 'Document with this serial number already exists'
+                error: 'Document with this serial/certificate number already exists'
             });
         }
 
@@ -109,7 +112,7 @@ exports.createDocument = async (req, res) => {
         // Create document in database
         const document = await Document.create({
             user: req.user.id,
-            serialNo: formData.SERIAL_NO,
+            serialNo: serialNo,
             filename: result.filename,
             pdfUrl: result.pdfUrl,
             qrCodeUrl: result.qrCodeUrl,
@@ -152,10 +155,13 @@ exports.updateDocument = async (req, res) => {
         const formData = req.body;
         const BASE_URL = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
 
+        // Use CERTIFICATE_NUMBER as serial number if SERIAL_NO is not provided
+        const newSerialNo = formData.SERIAL_NO || formData.CERTIFICATE_NUMBER;
+
         // If serial number is being changed, check if it already exists
-        if (formData.SERIAL_NO && formData.SERIAL_NO !== document.serialNo) {
+        if (newSerialNo && newSerialNo !== document.serialNo) {
             const existingDoc = await Document.findOne({ 
-                serialNo: formData.SERIAL_NO,
+                serialNo: newSerialNo,
                 status: { $ne: 'deleted' },
                 _id: { $ne: document._id }
             });
@@ -163,7 +169,7 @@ exports.updateDocument = async (req, res) => {
             if (existingDoc) {
                 return res.status(400).json({
                     success: false,
-                    error: 'Document with this serial number already exists'
+                    error: 'Document with this serial/certificate number already exists'
                 });
             }
         }
@@ -180,7 +186,7 @@ exports.updateDocument = async (req, res) => {
         const result = await generatePortClearancePDF(formData, BASE_URL);
 
         // Update document
-        document.serialNo = formData.SERIAL_NO;
+        document.serialNo = newSerialNo || document.serialNo;
         document.filename = result.filename;
         document.pdfUrl = result.pdfUrl;
         document.qrCodeUrl = result.qrCodeUrl;

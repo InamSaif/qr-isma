@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,8 +11,8 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#00A39C',
-                        secondary: '#008B84',
+                        primary: '#3CB371',
+                        secondary: '#7FFFD4',
                     }
                 }
             }
@@ -19,106 +20,157 @@
     </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+
+<body class="bg-slate-100 text-slate-900">
     <!-- Navigation -->
-    <nav class="bg-white shadow-sm">
+    <nav class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 flex items-center">
-                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <div class="flex items-center justify-center w-10 h-10 rounded-xl bg-primary/10 text-primary">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
                         </svg>
-                        <span class="ml-2 text-xl font-bold text-gray-800">QR Engine</span>
+                    </div>
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.22em] text-slate-500">QR Engine</p>
+                        <p class="text-base font-semibold text-slate-900">Port Clearance Control</p>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span class="text-sm text-gray-600">Welcome, <span id="userName" class="font-semibold"></span></span>
-                    <button onclick="logout()" class="text-sm text-red-600 hover:text-red-800 font-medium">Logout</button>
+                    <div class="hidden md:flex items-center space-x-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-xs font-semibold text-slate-700">System Online</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="text-right">
+                            <p class="text-xs text-slate-500">Signed in as</p>
+                            <p class="text-sm font-semibold" id="userName">User</p>
+                        </div>
+                        <button onclick="logout()"
+                            class="px-3 py-2 text-sm font-semibold text-white bg-primary rounded-lg shadow-sm hover:bg-secondary transition">
+                            Logout
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Port Clearance Documents</h1>
-            <p class="mt-2 text-gray-600">Manage and generate port clearance PDFs with dynamic QR codes</p>
+    <div class="relative overflow-hidden">
+        <div class="absolute inset-0 pointer-events-none">
+            <div class="absolute -top-16 -left-10 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+            <div class="absolute top-10 right-0 w-72 h-72 bg-secondary/20 rounded-full blur-3xl"></div>
         </div>
 
-        <!-- Stats -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-green-100 rounded-md p-3">
-                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 shadow-sm text-primary">
+                        Real-time status
+                        <span class="ml-2 w-2 h-2 rounded-full bg-green-500 animate-ping"></span>
                     </div>
-                    <div class="ml-5">
-                        <p class="text-sm font-medium text-gray-500">Active Documents</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="activeCount">0</p>
+                    <h1 class="mt-3 text-3xl font-bold tracking-tight text-slate-900">Port Clearance Workspace</h1>
+                    <p class="mt-2 text-slate-600 max-w-2xl">Monitor, create, and manage sailing certificates with live QR verification and document health indicators.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button onclick="loadDocuments()" class="px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 font-semibold hover:border-primary hover:text-primary transition flex items-center gap-2 shadow-sm">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Refresh Data
+                    </button>
+                    <button onclick="showCreateForm()" class="px-5 py-3 rounded-xl bg-gradient-to-r from-primary to-secondary text-white font-semibold shadow-lg hover:shadow-xl transition flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        New Document
+                    </button>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <div class="absolute inset-x-0 -top-10 h-24 bg-gradient-to-br from-green-100 to-white opacity-80"></div>
+                    <div class="relative p-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Active</p>
+                            <p class="mt-2 text-3xl font-bold text-slate-900" id="activeCount">0</p>
+                            <p class="text-sm text-slate-500">Ready for use</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-green-500/10 text-green-600 flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <div class="absolute inset-x-0 -top-10 h-24 bg-gradient-to-br from-amber-100 to-white opacity-80"></div>
+                    <div class="relative p-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Expired</p>
+                            <p class="mt-2 text-3xl font-bold text-slate-900" id="expiredCount">0</p>
+                            <p class="text-sm text-slate-500">Need attention</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                    <div class="absolute inset-x-0 -top-10 h-24 bg-gradient-to-br from-sky-100 to-white opacity-80"></div>
+                    <div class="relative p-6 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Total</p>
+                            <p class="mt-2 text-3xl font-bold text-slate-900" id="totalCount">0</p>
+                            <p class="text-sm text-slate-500">All certificates</p>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-yellow-100 rounded-md p-3">
-                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
+
+            <!-- Documents Table -->
+            <div class="rounded-2xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Documents</p>
+                        <h2 class="text-xl font-semibold text-slate-900">Your Certificates</h2>
                     </div>
-                    <div class="ml-5">
-                        <p class="text-sm font-medium text-gray-500">Expired Documents</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="expiredCount">0</p>
+                    <div class="hidden md:flex items-center gap-3">
+                        <!-- <span class="px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700">Live</span> -->
+                        <span class="text-xs text-slate-500">Updated after every action</span>
                     </div>
                 </div>
-            </div>
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0 bg-blue-100 rounded-md p-3">
-                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                    </div>
-                    <div class="ml-5">
-                        <p class="text-sm font-medium text-gray-500">Total Documents</p>
-                        <p class="text-2xl font-semibold text-gray-900" id="totalCount">0</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="mb-6 flex justify-between items-center">
-            <button onclick="showCreateForm()" class="bg-gradient-to-r from-primary to-secondary text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                </svg>
-                Create New Document
-            </button>
-            <button onclick="loadDocuments()" class="text-primary hover:text-secondary font-medium flex items-center">
-                <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                </svg>
-                Refresh
-            </button>
-        </div>
-
-        <!-- Documents Table -->
-        <div class="bg-white rounded-lg shadow overflow-hidden">
-            <div class="px-6 py-4 border-b border-gray-200">
-                <h2 class="text-lg font-semibold text-gray-900">Your Documents</h2>
-            </div>
-            <div id="documentsContainer" class="overflow-x-auto">
-                <div class="flex items-center justify-center py-12">
-                    <div class="text-center">
-                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-                        <p class="mt-4 text-gray-600">Loading documents...</p>
+                <div id="documentsContainer" class="overflow-x-auto">
+                    <div class="flex items-center justify-center py-16">
+                        <div class="text-center space-y-3">
+                            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+                            <p class="text-sm font-semibold text-slate-700">Fetching your documents</p>
+                            <p class="text-xs text-slate-500">Hang tight, we’re preparing the table.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -126,147 +178,229 @@
     </div>
 
     <!-- Create/Edit Document Modal -->
-    <div id="documentModal" class="hidden fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div class="relative top-10 mx-auto p-5 border w-full max-w-6xl shadow-lg rounded-md bg-white mb-20">
+    <div id="documentModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm overflow-y-auto h-full w-full z-50">
+        <div class="relative top-10 mx-auto p-6 border border-slate-200 w-full max-w-6xl shadow-2xl rounded-2xl bg-white mb-20">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-bold text-gray-900" id="modalTitle">Create New Document</h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                <div>
+                    <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Document Builder</p>
+                    <h3 class="text-2xl font-bold text-slate-900" id="modalTitle">Create New Document</h3>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
 
-            <form id="documentForm" class="space-y-6">
+            <form id="documentForm" class="space-y-8">
                 <input type="hidden" id="documentId">
-                
-                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
-                    <p class="text-sm text-yellow-800">
-                        <strong>Quick Start:</strong> Only Serial No. is required. Fill other fields as needed.
+
+                <div class="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 p-4 rounded-xl">
+                    <p class="text-sm text-slate-800">
+                        <strong class="text-primary">Quick Start:</strong> Fill in the fields below to generate your Sail Certificate PDF.
                     </p>
                 </div>
 
-                <!-- Serial No (Required) -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-50 rounded-lg">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Serial No. (EN) *</label>
-                        <input type="text" id="SERIAL_NO" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="PC-12345">
+                <!-- Sail Certificate Fields -->
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Certificate</p>
+                            <h3 class="text-lg font-semibold text-slate-900">Sail Certificate Information</h3>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700">Required</span>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Serial No. (FA)</label>
-                        <input type="text" id="SERIAL_NO_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="۱۲۳۴۵-PC">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Certificate Number -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Certificate Number</label>
+                            <input type="text" id="CERTIFICATE_NUMBER"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="PTS220925322532">
+                        </div>
+
+                        <!-- Vessel Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Name (EN)</label>
+                            <input type="text" id="VESSEL_NAME"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="HAMDAN AB">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Name (AR)</label>
+                            <input type="text" id="VESSEL_NAME_AR" dir="rtl"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="حمدان">
+                        </div>
+
+                        <!-- Vessel Nationality -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Nationality (EN)</label>
+                            <input type="text" id="VESSEL_NATIONALITY"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="PANAMA">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Nationality (AR)</label>
+                            <input type="text" id="VESSEL_NATIONALITY_AR" dir="rtl"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="بنما">
+                        </div>
+
+                        <!-- Flag -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Flag (EN)</label>
+                            <input type="text" id="FLAG"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="PANAMA">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Flag (AR)</label>
+                            <input type="text" id="FLAG_AR" dir="rtl"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="بنما">
+                        </div>
+
+                        <!-- Vessel Agent Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Agent Name (EN)</label>
+                            <input type="text" id="VESSEL_AGENT_NAME"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Arabian Sea Petroleum">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Agent Name (AR)</label>
+                            <input type="text" id="VESSEL_AGENT_NAME_AR" dir="rtl"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="بحر العرب للبترول">
+                        </div>
+
+                        <!-- Port of Departure -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Port of Departure (EN)</label>
+                            <input type="text" id="PORT_OF_DEPARTURE"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Shinas Port">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Port of Departure (AR)</label>
+                            <input type="text" id="PORT_OF_DEPARTURE_AR" dir="rtl"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="ميناء شناص">
+                        </div>
+
+                        <!-- Next Port of Call -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Next Port of Call (EN)</label>
+                            <input type="text" id="NEXT_PORT_OF_CALL"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Ajman">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Next Port of Call (AR)</label>
+                            <input type="text" id="NEXT_PORT_OF_CALL_AR" dir="rtl"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="ميناء صحار وجمّان">
+                        </div>
+
+                        <!-- Voyage Number -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Voyage Number</label>
+                            <input type="text" id="VOYAGE_NUMBER"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="25831">
+                        </div>
+
+                        <!-- Captain Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Captain Name (EN)</label>
+                            <input type="text" id="CAPTAIN_NAME"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Muhammad Asif">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Captain Name (AR)</label>
+                            <input type="text" id="CAPTAIN_NAME_AR" dir="rtl"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="محمد اصيف">
+                        </div>
+
+                        <!-- ETD -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Time of
+                                Departure</label>
+                            <input type="text" id="ETD"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="22/09/2025 13:00">
+                        </div>
+
+                        <!-- IMO Number -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">IMO Number</label>
+                            <input type="text" id="IMO_NUMBER"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="9331103">
+                        </div>
+
+                        <!-- Issuance Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Issuance Date</label>
+                            <input type="text" id="ISSUANCE_DATE"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="22/09/2025 01:30">
+                        </div>
+                    </div>
+
+                    <!-- Customs Remarks -->
+                    <div class="mt-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Customs Remarks</label>
+                        <textarea id="CUSTOMS_REMARKS" rows="2"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                            placeholder="This ship has carried out a food supply operation at sea..."></textarea>
                     </div>
                 </div>
 
-                <!-- Rest of form fields in grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- Marine Affairs No -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Marine Affairs No. (EN)</label>
-                        <input type="text" id="MARINE_AFFAIRS_NO" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="MA-2024-001">
+                <!-- Crew Members Section -->
+                <div class="rounded-xl border border-slate-200 bg-white p-5">
+                    <div class="flex justify-between items-center mb-4">
+                        <div>
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Crew</p>
+                            <h3 class="text-lg font-semibold text-slate-900">Crew Members</h3>
+                        </div>
+                        <button type="button" onclick="addCrewMember()"
+                            class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-secondary text-sm shadow-sm">
+                            + Add Crew Member
+                        </button>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Marine Affairs No. (FA)</label>
-                        <input type="text" id="MARINE_AFFAIRS_NO_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="۰۰۱-۲۰۲۴-MA">
+                    <div id="crewMembersContainer" class="space-y-4">
+                        <!-- Crew members will be added here dynamically -->
+                        <p class="text-sm text-gray-600 text-center py-4">No crew members added yet. Click "Add Crew
+                            Member" to start.</p>
                     </div>
-
-                    <!-- Issue Date Time -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Issue Date & Time (EN)</label>
-                        <input type="text" id="ISSUE_DATE_TIME" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="2024-10-18 14:30">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Issue Date & Time (FA)</label>
-                        <input type="text" id="ISSUE_DATE_TIME_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="۱۴۰۳/۰۷/۲۷ ۱۴:۳۰">
-                    </div>
-
-                    <!-- Port Clearance No -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Port Clearance No. (EN)</label>
-                        <input type="text" id="PORT_CLEARANCE_NO" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="PCN-2024-5678">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Port Clearance No. (FA)</label>
-                        <input type="text" id="PORT_CLEARANCE_NO_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="۵۶۷۸-۲۰۲۴-PCN">
-                    </div>
-
-                    <!-- Custom Leave No -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Custom Leave No. (EN)</label>
-                        <input type="text" id="CUSTOM_LEAVE_NO" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="CL-9876">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Custom Leave No. (FA)</label>
-                        <input type="text" id="CUSTOM_LEAVE_NO_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="۹۸۷۶-CL">
-                    </div>
-
-                    <!-- Agent -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Agent (EN)</label>
-                        <input type="text" id="AGENT" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="Maritime Services Co.">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Agent (FA)</label>
-                        <input type="text" id="AGENT_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="شرکت خدمات دریایی">
-                    </div>
-
-                    <!-- Vessel Name -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Name (EN)</label>
-                        <input type="text" id="VESSEL_NAME" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="MV Ocean Star">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Name (FA)</label>
-                        <input type="text" id="VESSEL_NAME_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="ستاره اقیانوس">
-                    </div>
-
-                    <!-- Continue with remaining fields... -->
-                    <!-- For brevity, I'll add a button to show/hide more fields -->
                 </div>
 
-                <details class="bg-gray-50 p-4 rounded-lg">
-                    <summary class="cursor-pointer font-semibold text-gray-700 hover:text-primary">Show More Fields (Optional)</summary>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Arrived From (EN)</label><input type="text" id="ARRIVED_FROM" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="Dubai Port"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Arrived From (FA)</label><input type="text" id="ARRIVED_FROM_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="بندر دبی"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">On Date (EN)</label><input type="text" id="ON_DATE" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="2024-10-15"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">On Date (FA)</label><input type="text" id="ON_DATE_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="۱۴۰۳/۰۷/۲۴"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">IMO No. (EN)</label><input type="text" id="IMO_NO" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="IMO 9234567"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">IMO No. (FA)</label><input type="text" id="IMO_NO_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="۹۲۳۴۵۶۷ IMO"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Ship's Flag (EN)</label><input type="text" id="SHIPS_FLAG" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="Panama"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Ship's Flag (FA)</label><input type="text" id="SHIPS_FLAG_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="پاناما"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Registry Port (EN)</label><input type="text" id="REGISTRY_PORT" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="Panama City"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Registry Port (FA)</label><input type="text" id="REGISTRY_PORT_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="پاناما سیتی"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Gross Tonnage (EN)</label><input type="text" id="GROSS_TONNAGE" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="45000 GT"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Gross Tonnage (FA)</label><input type="text" id="GROSS_TONNAGE_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="۴۵۰۰۰ تن"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Master (EN)</label><input type="text" id="MASTER" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="Captain John Smith"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Master (FA)</label><input type="text" id="MASTER_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="کاپیتان جان اسمیت"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Permitted to Sail (EN)</label><input type="text" id="PERMITTED_TO_SAIL" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="Bandar Abbas"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Permitted to Sail (FA)</label><input type="text" id="PERMITTED_TO_SAIL_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="بندر عباس"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Head of Maritime (EN)</label><input type="text" id="HEAD_OF_MARITIME" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="Ali Rezaei"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Head of Maritime (FA)</label><input type="text" id="HEAD_OF_MARITIME_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="علی رضایی"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Port (EN)</label><input type="text" id="PORT" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="Khorramshahr"></div>
-                        <div><label class="block text-sm font-medium text-gray-700 mb-2">Port (FA)</label><input type="text" id="PORT_FA" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary" placeholder="خرمشهر"></div>
-                    </div>
-                </details>
+                <!-- Legacy fields removed -->
 
-                <!-- Document Signed Checkbox -->
-                <div class="p-4 bg-gray-50 rounded-lg flex items-center">
-                    <input type="checkbox" id="isSigned" name="isSigned" class="h-5 w-5 text-primary focus:ring-primary border-gray-300 rounded">
-                    <label for="isSigned" class="ml-3 block text-sm font-medium text-gray-700">Document Signed</label>
-                </div>
 
+
+                <!-- Expiration Date (Optional) -->
                 <!-- Expiration Date -->
-                <div class="p-4 bg-yellow-50 rounded-lg">
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Document Expiration (Optional)</label>
-                    <input type="datetime-local" id="expiresAt" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent">
-                    <p class="mt-1 text-xs text-gray-500">Leave empty for no expiration. QR code will stop working after this date.</p>
+                <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl">
+                    <label class="block text-sm font-medium text-slate-800 mb-2">Document Expiration (Optional)</label>
+                    <input type="datetime-local" id="expiresAt"
+                        class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent bg-white">
+                    <p class="mt-1 text-xs text-slate-500">Leave empty for no expiration. QR code will stop working after
+                        this date.</p>
                 </div>
 
                 <!-- Submit Buttons -->
-                <div class="flex justify-end space-x-4 pt-4 border-t">
-                    <button type="button" onclick="closeModal()" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">Cancel</button>
-                    <button type="submit" id="submitBtn" class="px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold hover:shadow-lg">
+                <div class="flex justify-end space-x-4 pt-4 border-t border-slate-200">
+                    <button type="button" onclick="closeModal()"
+                        class="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">Cancel</button>
+                    <button type="submit" id="submitBtn"
+                        class="px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-semibold shadow-md hover:shadow-lg">
                         <span id="btnText">Create Document</span>
                     </button>
                 </div>
@@ -276,4 +410,5 @@
 
     <script src="/public/dashboard.js"></script>
 </body>
+
 </html>

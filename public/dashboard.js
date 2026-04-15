@@ -131,6 +131,12 @@ function showCreateForm() {
     document.getElementById('btnText').textContent = 'Create Document';
     document.getElementById('documentId').value = '';
     document.getElementById('documentForm').reset();
+    
+    // Clear crew members
+    const container = document.getElementById('crewMembersContainer');
+    container.innerHTML = '<p class="text-sm text-gray-600 text-center py-4">No crew members added yet. Click "Add Crew Member" to start.</p>';
+    crewMemberCount = 0;
+    
     document.getElementById('documentModal').classList.remove('hidden');
 }
 
@@ -138,6 +144,11 @@ function showCreateForm() {
 function closeModal() {
     document.getElementById('documentModal').classList.add('hidden');
     document.getElementById('documentForm').reset();
+    
+    // Clear crew members
+    const container = document.getElementById('crewMembersContainer');
+    container.innerHTML = '<p class="text-sm text-gray-600 text-center py-4">No crew members added yet. Click "Add Crew Member" to start.</p>';
+    crewMemberCount = 0;
 }
 
 // Handle form submission
@@ -154,10 +165,19 @@ document.getElementById('documentForm').addEventListener('submit', async (e) => 
     try {
         const formData = {};
         const fields = [
+            // New Sail Certificate fields
+            'CERTIFICATE_NUMBER', 'VESSEL_NAME', 'VESSEL_NAME_AR',
+            'VESSEL_NATIONALITY', 'VESSEL_NATIONALITY_AR', 'FLAG', 'FLAG_AR',
+            'VESSEL_AGENT_NAME', 'VESSEL_AGENT_NAME_AR', 'PORT_OF_DEPARTURE', 'PORT_OF_DEPARTURE_AR',
+            'NEXT_PORT_OF_CALL', 'NEXT_PORT_OF_CALL_AR', 'VOYAGE_NUMBER',
+            'CAPTAIN_NAME', 'CAPTAIN_NAME_AR', 'ETD', 'CUSTOMS_REMARKS',
+            'ISSUANCE_DATE', 'IMO_NUMBER',
+            
+            // Legacy fields (for backward compatibility)
             'SERIAL_NO', 'SERIAL_NO_FA', 'MARINE_AFFAIRS_NO', 'MARINE_AFFAIRS_NO_FA',
             'ISSUE_DATE_TIME', 'ISSUE_DATE_TIME_FA', 'PORT_CLEARANCE_NO', 'PORT_CLEARANCE_NO_FA',
             'CUSTOM_LEAVE_NO', 'CUSTOM_LEAVE_NO_FA', 'AGENT', 'AGENT_FA',
-            'VESSEL_NAME', 'VESSEL_NAME_FA', 'ARRIVED_FROM', 'ARRIVED_FROM_FA',
+            'VESSEL_NAME_FA', 'ARRIVED_FROM', 'ARRIVED_FROM_FA',
             'ON_DATE', 'ON_DATE_FA', 'IMO_NO', 'IMO_NO_FA',
             'SHIPS_FLAG', 'SHIPS_FLAG_FA', 'REGISTRY_PORT', 'REGISTRY_PORT_FA',
             'GROSS_TONNAGE', 'GROSS_TONNAGE_FA', 'MASTER', 'MASTER_FA',
@@ -166,15 +186,21 @@ document.getElementById('documentForm').addEventListener('submit', async (e) => 
         ];
         
         fields.forEach(field => {
-            const value = document.getElementById(field).value.trim();
-            if (value) formData[field] = value;
+            const element = document.getElementById(field);
+            if (element) {
+                const value = element.value.trim();
+                if (value) formData[field] = value;
+            }
         });
         
         const expiresAt = document.getElementById('expiresAt').value;
         if (expiresAt) formData.expiresAt = new Date(expiresAt).toISOString();
-
-        const isSignedCheckbox = document.getElementById('isSigned');
-        formData.isSigned = isSignedCheckbox.checked;
+        
+        // Add crew members
+        const crewMembers = getCrewMembers();
+        if (crewMembers.length > 0) {
+            formData.CREW_MEMBERS = crewMembers;
+        }
         
         const url = docId ? `${API_BASE}/api/documents/${docId}` : `${API_BASE}/api/documents`;
         const method = docId ? 'PUT' : 'POST';
@@ -196,8 +222,8 @@ document.getElementById('documentForm').addEventListener('submit', async (e) => 
         closeModal();
         await loadDocuments();
     } catch (error) {
-        console.error('Error saving document:', error);
         showError(error.message);
+        console.error('Error saving document:', error);
     } finally {
         submitBtn.disabled = false;
         document.getElementById('btnText').textContent = originalText;
@@ -247,18 +273,46 @@ async function editDocument(id) {
         // Fill form fields
         const fields = Object.keys(doc.formData || {});
         fields.forEach(field => {
+            // Skip CREW_MEMBERS as it needs special handling
+            if (field === 'CREW_MEMBERS') return;
+            
             const input = document.getElementById(field);
-            if (input && field !== 'isSigned') {
+            if (input) {
                 input.value = doc.formData[field] || '';
             }
         });
-
-        const isSignedCheckbox = document.getElementById('isSigned');
-        if (isSignedCheckbox) {
-            // Handle different possible storage formats
-            const isSignedValue = doc.formData?.isSigned ?? doc.isSigned ?? false;
-            console.log('Loading isSigned value:', isSignedValue, 'Type:', typeof isSignedValue);
-            isSignedCheckbox.checked = Boolean(isSignedValue);
+        
+        // Load crew members if they exist
+        const crewMembers = doc.formData.CREW_MEMBERS;
+        if (crewMembers && Array.isArray(crewMembers) && crewMembers.length > 0) {
+            // Clear existing crew members
+            const container = document.getElementById('crewMembersContainer');
+            container.innerHTML = '';
+            crewMemberCount = 0;
+            
+            // Add each crew member
+            crewMembers.forEach((crew, index) => {
+                addCrewMember();
+                
+                // Fill the crew member data
+                setTimeout(() => {
+                    const crewElements = document.querySelectorAll('.crew-member');
+                    const currentCrew = crewElements[index];
+                    
+                    if (currentCrew) {
+                        if (crew.nameAr) currentCrew.querySelector('.crew-nameAr').value = crew.nameAr;
+                        if (crew.positionEn) currentCrew.querySelector('.crew-positionEn').value = crew.positionEn;
+                        if (crew.positionAr) currentCrew.querySelector('.crew-positionAr').value = crew.positionAr;
+                        if (crew.nationalityEn) currentCrew.querySelector('.crew-nationalityEn').value = crew.nationalityEn;
+                        if (crew.nationalityAr) currentCrew.querySelector('.crew-nationalityAr').value = crew.nationalityAr;
+                        if (crew.dateOfBirth) currentCrew.querySelector('.crew-dateOfBirth').value = crew.dateOfBirth;
+                        if (crew.travelDocRef) currentCrew.querySelector('.crew-travelDocRef').value = crew.travelDocRef;
+                        if (crew.dateOfIssue) currentCrew.querySelector('.crew-dateOfIssue').value = crew.dateOfIssue;
+                        if (crew.dateOfExpiry) currentCrew.querySelector('.crew-dateOfExpiry').value = crew.dateOfExpiry;
+                        if (crew.seamanBook) currentCrew.querySelector('.crew-seamanBook').value = crew.seamanBook;
+                    }
+                }, 50 * (index + 1));
+            });
         }
         
         if (doc.expiresAt) {
@@ -343,11 +397,158 @@ async function logout() {
 
 // Show success message
 function showSuccess(message) {
-    alert('✅ ' + message);
+    window.alert('Success: ' + message);
 }
 
-// Show error message
+// Show error message with custom modal (cannot be blocked by browser)
 function showError(message) {
-    alert('❌ ' + message);
+    console.log('=== SHOWERROR CALLED ===');
+    console.log('Message:', message);
+    
+    // Create modal overlay
+    const overlay = document.createElement('div');
+    overlay.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 99999; display: flex; align-items: center; justify-content: center;';
+    
+    // Create modal box
+    const modal = document.createElement('div');
+    modal.style.cssText = 'background: white; padding: 30px; border-radius: 10px; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);';
+    
+    // Create content
+    modal.innerHTML = `
+        <h2 style="color: #dc2626; margin: 0 0 15px 0; font-size: 20px; font-weight: bold;">❌ Error</h2>
+        <p style="margin: 0 0 20px 0; color: #333; font-size: 16px; line-height: 1.5;">${message}</p>
+        <button id="errorOkBtn" style="background: #dc2626; color: white; border: none; padding: 10px 30px; border-radius: 5px; font-size: 16px; cursor: pointer; font-weight: bold;">OK</button>
+    `;
+    
+    overlay.appendChild(modal);
+    document.body.appendChild(overlay);
+    
+    // Focus on OK button
+    setTimeout(() => {
+        const okBtn = document.getElementById('errorOkBtn');
+        okBtn.focus();
+        
+        // Close on click
+        okBtn.onclick = () => {
+            document.body.removeChild(overlay);
+            console.log('=== ERROR MODAL DISMISSED ===');
+        };
+        
+        // Close on Enter key
+        okBtn.onkeypress = (e) => {
+            if (e.key === 'Enter') {
+                document.body.removeChild(overlay);
+                console.log('=== ERROR MODAL DISMISSED ===');
+            }
+        };
+    }, 100);
 }
 
+// Crew Member Management
+let crewMemberCount = 0;
+
+function addCrewMember() {
+    crewMemberCount++;
+    const container = document.getElementById('crewMembersContainer');
+    
+    // Remove the "no crew members" message if it exists
+    if (crewMemberCount === 1) {
+        container.innerHTML = '';
+    }
+    
+    const crewMemberHtml = `
+        <div class="crew-member border border-gray-300 rounded-lg p-4 bg-white" data-crew-id="${crewMemberCount}">
+            <div class="flex justify-between items-center mb-3">
+                <h4 class="font-semibold text-gray-700">Crew Member #${crewMemberCount}</h4>
+                <button type="button" onclick="removeCrewMember(${crewMemberCount})" class="text-red-600 hover:text-red-800 text-sm">
+                    ✕ Remove
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Name (Arabic)</label>
+                    <input type="text" class="crew-nameAr w-full px-3 py-2 border border-gray-300 rounded text-sm" dir="rtl" placeholder="محمد اصف">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Position (EN)</label>
+                    <input type="text" class="crew-positionEn w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="Captain">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Position (AR)</label>
+                    <input type="text" class="crew-positionAr w-full px-3 py-2 border border-gray-300 rounded text-sm" dir="rtl" placeholder="قبطان">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Nationality (EN)</label>
+                    <input type="text" class="crew-nationalityEn w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="PAKISTAN">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Nationality (AR)</label>
+                    <input type="text" class="crew-nationalityAr w-full px-3 py-2 border border-gray-300 rounded text-sm" dir="rtl" placeholder="باكستان">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Date of Birth</label>
+                    <input type="text" class="crew-dateOfBirth w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="03/10/1955">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Travel Doc Ref No.</label>
+                    <input type="text" class="crew-travelDocRef w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="AS3174333">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Date of Issue</label>
+                    <input type="text" class="crew-dateOfIssue w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="15/09/2021">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Date of Expiry</label>
+                    <input type="text" class="crew-dateOfExpiry w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="14/09/2026">
+                </div>
+                <div>
+                    <label class="block text-xs font-medium text-gray-600 mb-1">Seaman Book</label>
+                    <input type="text" class="crew-seamanBook w-full px-3 py-2 border border-gray-300 rounded text-sm" placeholder="AS3174333">
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', crewMemberHtml);
+}
+
+function removeCrewMember(id) {
+    const crewMember = document.querySelector(`[data-crew-id="${id}"]`);
+    if (crewMember) {
+        crewMember.remove();
+    }
+    
+    // If no crew members left, show the message again
+    const container = document.getElementById('crewMembersContainer');
+    if (container.children.length === 0) {
+        container.innerHTML = '<p class="text-sm text-gray-600 text-center py-4">No crew members added yet. Click "Add Crew Member" to start.</p>';
+        crewMemberCount = 0;
+    }
+}
+
+function getCrewMembers() {
+    const crewMembers = [];
+    const crewElements = document.querySelectorAll('.crew-member');
+    
+    crewElements.forEach(crew => {
+        const member = {
+            nameAr: crew.querySelector('.crew-nameAr').value.trim(),
+            positionEn: crew.querySelector('.crew-positionEn').value.trim(),
+            positionAr: crew.querySelector('.crew-positionAr').value.trim(),
+            nationalityEn: crew.querySelector('.crew-nationalityEn').value.trim(),
+            nationalityAr: crew.querySelector('.crew-nationalityAr').value.trim(),
+            dateOfBirth: crew.querySelector('.crew-dateOfBirth').value.trim(),
+            travelDocRef: crew.querySelector('.crew-travelDocRef').value.trim(),
+            dateOfIssue: crew.querySelector('.crew-dateOfIssue').value.trim(),
+            dateOfExpiry: crew.querySelector('.crew-dateOfExpiry').value.trim(),
+            seamanBook: crew.querySelector('.crew-seamanBook').value.trim()
+        };
+        
+        // Only add if at least name is filled
+        if (member.nameAr) {
+            crewMembers.push(member);
+        }
+    });
+    
+    return crewMembers;
+}
