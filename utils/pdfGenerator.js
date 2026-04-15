@@ -44,13 +44,25 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
 
     // NOW create placeholders object (can reference totalPages)
     const placeholders = {
+        // Port Clearance specific fields
+        'PERMIT_NUMBER': formData.PERMIT_NUMBER || '',
+        'ISSUANCE_DATE': formData.ISSUANCE_DATE || '',
+        'VESSEL_NAME': formData.VESSEL_NAME || '',
+        'VESSEL_IMO': formData.VESSEL_IMO || '',
+        'FLAG': formData.FLAG || '',
+        'CLASSIFICATION_SOCIETY': formData.CLASSIFICATION_SOCIETY || '',
+        'DEPARTURE_PORT': formData.DEPARTURE_PORT || '',
+        'VESSEL_TYPE': formData.VESSEL_TYPE || '',
+        'VESSEL_GRT': formData.VESSEL_GRT || '',
+        'AGENCY_NAME': formData.AGENCY_NAME || '',
+        'ARRIVAL_DATE': formData.ARRIVAL_DATE || '',
+        'DEPARTURE_DATE': formData.DEPARTURE_DATE || '',
+        
         // Sail Certificate specific fields
         'CERTIFICATE_NUMBER': formData.CERTIFICATE_NUMBER || '',
-        'VESSEL_NAME': formData.VESSEL_NAME || '',
         'VESSEL_NAME_AR': formData.VESSEL_NAME_AR || '',
         'VESSEL_NATIONALITY': formData.VESSEL_NATIONALITY || '',
         'VESSEL_NATIONALITY_AR': formData.VESSEL_NATIONALITY_AR || '',
-        'FLAG': formData.FLAG || '',
         'FLAG_AR': formData.FLAG_AR || '',
         'VESSEL_AGENT_NAME': formData.VESSEL_AGENT_NAME || '',
         'VESSEL_AGENT_NAME_AR': formData.VESSEL_AGENT_NAME_AR || '',
@@ -63,7 +75,6 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
         'CAPTAIN_NAME_AR': formData.CAPTAIN_NAME_AR || '',
         'ETD': formData.ETD || '',
         'CUSTOMS_REMARKS': formData.CUSTOMS_REMARKS || '',
-        'ISSUANCE_DATE': formData.ISSUANCE_DATE || '',
         'PRINTED_ON': formData.PRINTED_ON || printedOn,
         'IMO_NUMBER': formData.IMO_NUMBER || '',
         'TOTAL_PAGES_COUNT': totalPages.toString(),
@@ -496,34 +507,29 @@ async function generateTempPDF(htmlContent, outputPath) {
 /**
  * Main function to generate Port Clearance PDF with dynamic QR code
  */
-async function generatePortClearancePDF(formData, baseUrl) {
+async function generatePortClearancePDF(formData, baseUrl, documentId) {
     const tempDir = path.join(__dirname, '../temp');
     const storageDir = path.join(__dirname, '../storage');
     const templatePath = path.join(__dirname, '../template.html');
 
     // Generate unique filename
     const uniqueId = uuidv4();
-    const filename = `port-clearance-${formData.SERIAL_NO || uniqueId}.pdf`;
+    const filename = `port-clearance-${uniqueId}.pdf`;
     const finalPdfPath = path.join(storageDir, filename);
     const qrCodePath = path.join(tempDir, `qr-${uniqueId}.png`);
-
-    
 
     try {
         // Step 1: Read template
         const templateHtml = await fs.readFile(templatePath, 'utf-8');
 
-        // Step 2: Generate PDF URL and Validation URL
+        // Step 2: Generate PDF URL and Validation URL using document ID
         const pdfUrl = `${baseUrl}/pdfs/${filename}`;
         
-        // Extract the raw cert name without the .pdf extension
-        const uniqueId = formData.SERIAL_NO || filename.replace('port-clearance-', '').replace('.pdf', '');
-        
-        // Clean BASE_URL to prevent double slashes before adding route
+        // Use the provided documentId for the QR code URL
         const cleanBaseUrl = baseUrl.replace(/\/$/, '');
-        const validationUrl = `${cleanBaseUrl}/view/${encodeURIComponent(uniqueId)}`;
+        const validationUrl = `${cleanBaseUrl}/view/${documentId}`;
 
-        // Step 3: Generate QR code as file pointing to the /view/:cert route
+        // Step 3: Generate QR code as file pointing to the /view/:documentId route
         await generateQRCode(validationUrl, qrCodePath);
         console.log('QR Code generated for URL:', validationUrl);
 

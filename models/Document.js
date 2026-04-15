@@ -14,15 +14,15 @@ const documentSchema = new mongoose.Schema({
     },
     filename: {
         type: String,
-        required: true
+        default: null
     },
     pdfUrl: {
         type: String,
-        required: true
+        default: null
     },
     qrCodeUrl: {
         type: String,
-        required: true
+        default: null
     },
     // Form Data - Using Mixed type to allow any fields
     formData: {

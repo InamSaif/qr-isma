@@ -79,14 +79,14 @@ exports.createDocument = async (req, res) => {
         const formData = req.body;
         const BASE_URL = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
 
-        // Use CERTIFICATE_NUMBER as serial number if SERIAL_NO is not provided
-        const serialNo = formData.SERIAL_NO || formData.CERTIFICATE_NUMBER;
+        // Use PERMIT_NUMBER as serial number (Port Clearance), fallback to CERTIFICATE_NUMBER (Sail Certificate), then SERIAL_NO (legacy)
+        const serialNo = formData.PERMIT_NUMBER || formData.CERTIFICATE_NUMBER || formData.SERIAL_NO;
         
         // Validate required field
         if (!serialNo) {
             return res.status(400).json({
                 success: false,
-                error: 'Either SERIAL_NO or CERTIFICATE_NUMBER is required'
+                error: 'Either PERMIT_NUMBER, CERTIFICATE_NUMBER, or SERIAL_NO is required'
             });
         }
 
@@ -106,20 +106,26 @@ exports.createDocument = async (req, res) => {
         console.log('Generating Port Clearance PDF for user:', req.user.id);
         console.log('Form Data:', formData);
 
-        // Generate PDF with dynamic QR code
-        const result = await generatePortClearancePDF(formData, BASE_URL);
-
-        // Create document in database
+        // Create document in database first to get the document ID
         const document = await Document.create({
             user: req.user.id,
             serialNo: serialNo,
-            filename: result.filename,
-            pdfUrl: result.pdfUrl,
-            qrCodeUrl: result.qrCodeUrl,
+            filename: '', // Will be updated after PDF generation
+            pdfUrl: '',
+            qrCodeUrl: '',
             formData: formData,
             status: 'active',
             expiresAt: formData.expiresAt || null
         });
+
+        // Now generate PDF with dynamic QR code pointing to /view/:documentId
+        const result = await generatePortClearancePDF(formData, BASE_URL, document._id);
+
+        // Update document with PDF details
+        document.filename = result.filename;
+        document.pdfUrl = result.pdfUrl;
+        document.qrCodeUrl = result.qrCodeUrl;
+        await document.save();
 
         res.status(201).json({
             success: true,
@@ -155,8 +161,8 @@ exports.updateDocument = async (req, res) => {
         const formData = req.body;
         const BASE_URL = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
 
-        // Use CERTIFICATE_NUMBER as serial number if SERIAL_NO is not provided
-        const newSerialNo = formData.SERIAL_NO || formData.CERTIFICATE_NUMBER;
+        // Use PERMIT_NUMBER as serial number (Port Clearance), fallback to CERTIFICATE_NUMBER (Sail Certificate), then SERIAL_NO (legacy)
+        const newSerialNo = formData.PERMIT_NUMBER || formData.CERTIFICATE_NUMBER || formData.SERIAL_NO;
 
         // If serial number is being changed, check if it already exists
         if (newSerialNo && newSerialNo !== document.serialNo) {
@@ -337,6 +343,63 @@ exports.verifyDocument = async (req, res) => {
         res.status(500).json({
             success: false,
             error: 'Error verifying document'
+        });
+    }
+};
+
+// @desc    Get public document details for QR code scanning
+// @route   GET /api/documents/public/:id
+// @access  Public
+exports.getPublicDocument = async (req, res) => {
+    try {
+        const document = await Document.findOne({
+            _id: req.params.id
+        });
+
+        if (!document) {
+            return res.status(404).json({
+                success: false,
+                error: 'Document not found'
+            });
+        }
+
+        // Check if document is expired or deleted
+        const isExpired = document.isExpired();
+        if (isExpired && document.status === 'active') {
+            document.status = 'expired';
+            await document.save();
+        }
+
+        if (document.status === 'expired') {
+            return res.status(403).json({
+                success: false,
+                error: 'This document has expired',
+                expiresAt: document.expiresAt
+            });
+        }
+
+        if (document.status === 'deleted') {
+            return res.status(404).json({
+                success: false,
+                error: 'This document is no longer valid'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            document: {
+                _id: document._id,
+                serialNo: document.serialNo,
+                formData: document.formData,
+                status: document.status,
+                createdAt: document.createdAt
+            }
+        });
+    } catch (error) {
+        console.error('Error fetching public document:', error);
+        res.status(500).json({
+            success: false,
+            error: 'Error fetching document'
         });
     }
 };

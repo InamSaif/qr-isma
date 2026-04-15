@@ -7,12 +7,14 @@ const {
     updateDocument,
     deleteDocument,
     expireDocument,
-    verifyDocument
+    verifyDocument,
+    getPublicDocument
 } = require('../controllers/documentController');
 const { protect } = require('../middleware/auth');
 
 // Public routes
 router.get('/verify/:serialNo', verifyDocument);
+router.get('/public/:id', getPublicDocument);
 
 // Protected routes
 router.use(protect);

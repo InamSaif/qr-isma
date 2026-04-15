@@ -127,16 +127,10 @@ function updateStats(documents) {
 
 // Show create form
 function showCreateForm() {
-    document.getElementById('modalTitle').textContent = 'Create New Document';
+    document.getElementById('modalTitle').textContent = 'Create New Port Clearance';
     document.getElementById('btnText').textContent = 'Create Document';
     document.getElementById('documentId').value = '';
     document.getElementById('documentForm').reset();
-    
-    // Clear crew members
-    const container = document.getElementById('crewMembersContainer');
-    container.innerHTML = '<p class="text-sm text-gray-600 text-center py-4">No crew members added yet. Click "Add Crew Member" to start.</p>';
-    crewMemberCount = 0;
-    
     document.getElementById('documentModal').classList.remove('hidden');
 }
 
@@ -144,11 +138,6 @@ function showCreateForm() {
 function closeModal() {
     document.getElementById('documentModal').classList.add('hidden');
     document.getElementById('documentForm').reset();
-    
-    // Clear crew members
-    const container = document.getElementById('crewMembersContainer');
-    container.innerHTML = '<p class="text-sm text-gray-600 text-center py-4">No crew members added yet. Click "Add Crew Member" to start.</p>';
-    crewMemberCount = 0;
 }
 
 // Handle form submission
@@ -165,24 +154,10 @@ document.getElementById('documentForm').addEventListener('submit', async (e) => 
     try {
         const formData = {};
         const fields = [
-            // New Sail Certificate fields
-            'CERTIFICATE_NUMBER', 'VESSEL_NAME', 'VESSEL_NAME_AR',
-            'VESSEL_NATIONALITY', 'VESSEL_NATIONALITY_AR', 'FLAG', 'FLAG_AR',
-            'VESSEL_AGENT_NAME', 'VESSEL_AGENT_NAME_AR', 'PORT_OF_DEPARTURE', 'PORT_OF_DEPARTURE_AR',
-            'NEXT_PORT_OF_CALL', 'NEXT_PORT_OF_CALL_AR', 'VOYAGE_NUMBER',
-            'CAPTAIN_NAME', 'CAPTAIN_NAME_AR', 'ETD', 'CUSTOMS_REMARKS',
-            'ISSUANCE_DATE', 'IMO_NUMBER',
-            
-            // Legacy fields (for backward compatibility)
-            'SERIAL_NO', 'SERIAL_NO_FA', 'MARINE_AFFAIRS_NO', 'MARINE_AFFAIRS_NO_FA',
-            'ISSUE_DATE_TIME', 'ISSUE_DATE_TIME_FA', 'PORT_CLEARANCE_NO', 'PORT_CLEARANCE_NO_FA',
-            'CUSTOM_LEAVE_NO', 'CUSTOM_LEAVE_NO_FA', 'AGENT', 'AGENT_FA',
-            'VESSEL_NAME_FA', 'ARRIVED_FROM', 'ARRIVED_FROM_FA',
-            'ON_DATE', 'ON_DATE_FA', 'IMO_NO', 'IMO_NO_FA',
-            'SHIPS_FLAG', 'SHIPS_FLAG_FA', 'REGISTRY_PORT', 'REGISTRY_PORT_FA',
-            'GROSS_TONNAGE', 'GROSS_TONNAGE_FA', 'MASTER', 'MASTER_FA',
-            'PERMITTED_TO_SAIL', 'PERMITTED_TO_SAIL_FA', 'HEAD_OF_MARITIME', 'HEAD_OF_MARITIME_FA',
-            'PORT', 'PORT_FA'
+            // Port Clearance fields
+            'PERMIT_NUMBER', 'ISSUANCE_DATE', 'VESSEL_NAME', 'VESSEL_IMO',
+            'FLAG', 'CLASSIFICATION_SOCIETY', 'DEPARTURE_PORT', 'VESSEL_TYPE',
+            'VESSEL_GRT', 'AGENCY_NAME', 'ARRIVAL_DATE', 'DEPARTURE_DATE'
         ];
         
         fields.forEach(field => {
@@ -195,12 +170,6 @@ document.getElementById('documentForm').addEventListener('submit', async (e) => 
         
         const expiresAt = document.getElementById('expiresAt').value;
         if (expiresAt) formData.expiresAt = new Date(expiresAt).toISOString();
-        
-        // Add crew members
-        const crewMembers = getCrewMembers();
-        if (crewMembers.length > 0) {
-            formData.CREW_MEMBERS = crewMembers;
-        }
         
         const url = docId ? `${API_BASE}/api/documents/${docId}` : `${API_BASE}/api/documents`;
         const method = docId ? 'PUT' : 'POST';
@@ -273,47 +242,11 @@ async function editDocument(id) {
         // Fill form fields
         const fields = Object.keys(doc.formData || {});
         fields.forEach(field => {
-            // Skip CREW_MEMBERS as it needs special handling
-            if (field === 'CREW_MEMBERS') return;
-            
             const input = document.getElementById(field);
             if (input) {
                 input.value = doc.formData[field] || '';
             }
         });
-        
-        // Load crew members if they exist
-        const crewMembers = doc.formData.CREW_MEMBERS;
-        if (crewMembers && Array.isArray(crewMembers) && crewMembers.length > 0) {
-            // Clear existing crew members
-            const container = document.getElementById('crewMembersContainer');
-            container.innerHTML = '';
-            crewMemberCount = 0;
-            
-            // Add each crew member
-            crewMembers.forEach((crew, index) => {
-                addCrewMember();
-                
-                // Fill the crew member data
-                setTimeout(() => {
-                    const crewElements = document.querySelectorAll('.crew-member');
-                    const currentCrew = crewElements[index];
-                    
-                    if (currentCrew) {
-                        if (crew.nameAr) currentCrew.querySelector('.crew-nameAr').value = crew.nameAr;
-                        if (crew.positionEn) currentCrew.querySelector('.crew-positionEn').value = crew.positionEn;
-                        if (crew.positionAr) currentCrew.querySelector('.crew-positionAr').value = crew.positionAr;
-                        if (crew.nationalityEn) currentCrew.querySelector('.crew-nationalityEn').value = crew.nationalityEn;
-                        if (crew.nationalityAr) currentCrew.querySelector('.crew-nationalityAr').value = crew.nationalityAr;
-                        if (crew.dateOfBirth) currentCrew.querySelector('.crew-dateOfBirth').value = crew.dateOfBirth;
-                        if (crew.travelDocRef) currentCrew.querySelector('.crew-travelDocRef').value = crew.travelDocRef;
-                        if (crew.dateOfIssue) currentCrew.querySelector('.crew-dateOfIssue').value = crew.dateOfIssue;
-                        if (crew.dateOfExpiry) currentCrew.querySelector('.crew-dateOfExpiry').value = crew.dateOfExpiry;
-                        if (crew.seamanBook) currentCrew.querySelector('.crew-seamanBook').value = crew.seamanBook;
-                    }
-                }, 50 * (index + 1));
-            });
-        }
         
         if (doc.expiresAt) {
             const date = new Date(doc.expiresAt);

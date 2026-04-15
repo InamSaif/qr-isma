@@ -1,257 +1,537 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sail Certificate - Royal Oman Police</title>
-    <style>
-        :root {
-            --border-color: #000;
-            --font-main: Arial, sans-serif;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200..1000&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <title>Port Clearance - تصريح مغادرة وحدة بحرية</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Libre+Baskerville:wght@400;700&display=swap');
 
-        body {
-            font-family: var(--font-main);
-            margin: 20px;
-            color: #000;
-            line-height: 1.4;
-        }
+    /* Force color printing — critical for PDF renderers that strip backgrounds/colors */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-        /* Layout & Utilities */
-        .text-center { text-align: center; }
-        .text-right { text-align: right; }
-        .text-left { text-align: left; }
-        .bold { font-weight: bold; }
-        .rtl { direction: rtl; }
-        
-        .header-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 20px;
-        }
+    html, body {
+      background: #ffffff !important;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', Georgia, serif;
+      color: #1a1a1a;
+    }
 
-        .logo-img { width: 96px; height: 108px; }
+    /* Page wrapper — no border, no shadow */
+    .page {
+      background: #ffffff;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      /* padding: 48px 52px; */
+    }
 
-        /* Typography */
-        h1 { font-size: 14pt; margin: 2px 0; }
-        h2 { font-size: 12pt; margin: 10px 0; border-bottom: 1px solid var(--border-color); padding-bottom: 5px; }
-        h3 { font-size: 10pt; margin: 5px 0; }
-        .sub-text { font-size: 9pt; }
-        .crew-text { font-size: 8pt; }
-        .footer-note { font-size: 7pt; color: #333; }
+    /* === HEADER === */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
 
-        /* Tables */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
+    .logo-svg {
+      width: 88px;
+      height: 88px;
+      flex-shrink: 0;
+    }
 
-        th, td {
-            border: 1px solid var(--border-color);
-            padding: 6px;
-            vertical-align: top;
-        }
+    .authority-text {
+      text-align: right;
+      line-height: 1.6;
+    }
 
-        .label {
-            font-size: 10pt;
-            font-weight: bold;
-            display: block;
-        }
+    .authority-text .arabic {
+      font-family: 'Cairo', sans-serif;
+      font-size: 17px;
+      font-weight: 700;
+      color: #1a1a1a;
+      display: block;
+      direction: rtl;
+    }
 
-        .value {
-            font-size: 9pt;
-            display: block;
-            margin-top: 4px;
-        }
+    .authority-text .english {
+      font-family: 'Poppins', sans-serif;
+      font-size: 13.5px;
+      color: #333333;
+      display: block;
+    }
 
-        /* Review Section */
-        .review-table td { height: 50px; }
+    /* === TITLE BANNER === */
+    .title-banner-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
 
-        /* Footer & QR */
-        .page-break { page-break-after: always; }
-        .footer {
-            border-top: 1px solid #ccc;
-            margin-top: 30px;
-            padding-top: 10px;
-        }
+    .title-banner {
+      background-color: #233c73;
+      color: #ffffff;
+      text-align: center;
+      padding: 16px 48px;
+      border-radius: 4px;
+    }
 
-        .qr-section {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-top: 20px;
-        }
+    .title-banner .en {
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      /* font-weight: 700; */
+      letter-spacing: 0.04em;
+      margin-bottom: 6px;
+      color: #ffffff;
+    }
 
-        .qr-code { width: 82px; height: 82px; }
-    </style>
+    .title-banner .ar {
+      font-family: 'Cairo', sans-serif;
+      font-size: 15px;
+      direction: rtl;
+      font-weight: 400;
+      color: #ffffff;
+    }
+
+    /* === FIELDS GRID === */
+    .fields-section {
+      margin-bottom: 40px;
+    }
+
+    /* Use grid layout for proper left-right alignment */
+    .fields-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      width: 100%;
+      align-items: start;
+    }
+
+    .field-col {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .field-col.ltr {
+      padding-right: 0;
+    }
+
+    .field-col.rtl {
+      padding-left: 0;
+    }
+
+    .field-row {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 8px 0;
+      gap: 6px;
+      flex-wrap: nowrap;
+      height: 28px;
+      margin-bottom: 4px;
+    }
+
+    .field-row:last-child {
+      padding-bottom: 0;
+    }
+
+    .field-label {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12.5px;
+      color: #000;
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+
+    .field-label.ar {
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+    }
+
+    .field-value {
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      color: #233c73;
+    }
+
+    .field-value.agency {
+      color: #233c73;
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+    }
+
+    .divider {
+        height: 3px;
+        background-color: #000;
+        width: 100%;
+    }
+
+    /* === QR SECTION === */
+    .qr-section {
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    padding: 36px 0px;
+    /* margin-left: -52px; */
+    /* margin-right: -52px; */
+    margin-bottom: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+}
+
+    .qr-box {
+      border-width: 1px;
+      border-style: solid;
+      border-color: #cccccc;
+      padding: 16px;
+      background-color: #ffffff;
+      display: inline-block;
+    }
+
+    .qr-box svg {
+      display: block;
+    }
+
+    .qr-label {
+      font-family: 'Cairo', sans-serif;
+      font-size: 15px;
+      color: #555555;
+      direction: rtl;
+    }
+
+    /* === FOOTER === */
+    .clearance-statement {
+      margin-bottom: 28px;
+    }
+
+    .clearance-statement .ar-statement {
+      text-align: right;
+      direction: rtl;
+      font-family: 'Cairo', sans-serif;
+      font-size: 17px;
+      color: #1a1a1a;
+      margin-bottom: 6px;
+      line-height: 1.7;
+    }
+
+    .clearance-statement .en-statement {
+      font-family: 'Poppins', sans-serif;
+      font-size: 13px;
+      color: #333333;
+      line-height: 1.7;
+    }
+
+    .divider {
+      border: none;
+      border-top-width: 1px;
+      border-top-style: solid;
+      border-top-color: #bbbbbb;
+      margin: 20px 0;
+    }
+
+    .system-note {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .system-note .en {
+      font-family: 'Poppins', sans-serif;
+      font-size: 12px;
+      color: #777777;
+    }
+
+    .system-note .ar {
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      color: #777777;
+      direction: rtl;
+      text-align: right;
+    }
+  </style>
 </head>
 <body>
+  <div class="page">
 
-    <div class="header-section">
-        <div>
-            <h1>SULTANATE OF OMAN ROYAL OMAN POLICE</h1>
-            <h1>D.G. OF CUSTOMS</h1>
+    <!-- HEADER -->
+    <div class="header">
+      <svg class="logo-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="95" fill="none" stroke="#2c3e6b" stroke-width="5"/>
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#2c3e6b" stroke-width="2"/>
+        <g fill="#2c3e6b">
+          <rect x="95" y="2" width="10" height="16" rx="2"/>
+          <rect x="95" y="182" width="10" height="16" rx="2"/>
+          <rect x="2" y="95" width="16" height="10" rx="2"/>
+          <rect x="182" y="95" width="16" height="10" rx="2"/>
+          <rect x="140" y="14" width="10" height="16" rx="2" transform="rotate(45 145 22)"/>
+          <rect x="44" y="170" width="10" height="16" rx="2" transform="rotate(45 49 178)"/>
+          <rect x="170" y="44" width="16" height="10" rx="2" transform="rotate(45 178 49)"/>
+          <rect x="14" y="140" width="16" height="10" rx="2" transform="rotate(45 22 145)"/>
+          <rect x="155" y="20" width="10" height="16" rx="2" transform="rotate(22.5 160 28)"/>
+          <rect x="30" y="164" width="10" height="16" rx="2" transform="rotate(22.5 35 172)"/>
+          <rect x="164" y="155" width="16" height="10" rx="2" transform="rotate(22.5 172 160)"/>
+          <rect x="20" y="30" width="16" height="10" rx="2" transform="rotate(22.5 28 35)"/>
+        </g>
+        <rect x="30" y="52" width="140" height="14" fill="#ce1126"/>
+        <rect x="30" y="66" width="140" height="14" fill="#ffffff"/>
+        <rect x="30" y="80" width="140" height="14" fill="#007a3d"/>
+        <text x="100" y="130" text-anchor="middle" font-size="36" fill="#2c3e6b">⚓</text>
+        <text x="100" y="162" text-anchor="middle" font-size="9" fill="#2c3e6b" font-family="Arial, sans-serif" font-weight="bold">Iraqi Supreme Maritime</text>
+        <text x="100" y="173" text-anchor="middle" font-size="9" fill="#2c3e6b" font-family="Arial, sans-serif" font-weight="bold">Authority</text>
+        <text x="100" y="48" text-anchor="middle" font-size="8.5" fill="#ffffff" font-family="Arial, sans-serif">ISMA</text>
+      </svg>
+
+      <div class="authority-text">
+        <span class="arabic">الهيأة البحرية العراقية العليا</span>
+        <span class="english">Iraqi Supreme Maritime Authority</span>
+      </div>
+    </div>
+
+    <!-- TITLE BANNER -->
+    <div class="title-banner-wrap">
+      <div class="title-banner">
+        <div class="en">Port Clearance</div>
+        <div class="ar">تصريح مغادرة وحدة بحرية</div>
+      </div>
+    </div>
+
+    <!-- FIELDS -->
+    <div class="fields-section">
+      <div class="fields-grid">
+
+        <!-- LEFT: English -->
+        <div class="field-col ltr">
+          <div class="field-row">
+            <span class="field-label">Permit Number:</span>
+            <span class="field-value">15698</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Issuance Date:</span>
+            <span class="field-value">02-Apr-2026</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Vessel Name:</span>
+            <span class="field-value">ASTRID</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Vessel IMO:</span>
+            <span class="field-value">9246475</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Flag:</span>
+            <span class="field-value">PANAMA</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Classification Society:</span>
+            <span class="field-value">TANKER</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Departure Port Name:</span>
+            <span class="field-value">Khur Al-Zubair Port</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Vessel Type:</span>
+            <span class="field-value">Oil Tanker</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Vessel GRT:</span>
+            <span class="field-value">30008</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Agency Name:</span>
+            <span class="field-value agency">شركة مرجان البحر للخدمات البحا</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Arrival Date:</span>
+            <span class="field-value">17-Mar-2026</span>
+          </div>
+          <div class="field-row">
+            <span class="field-label">Departure Date:</span>
+            <span class="field-value">02-Apr-2026</span>
+          </div>
         </div>
-        <img src="PermissionTodSailPrintArabic_files/Image_001.png" alt="ROP Logo" class="logo-img">
-        <div class="text-right rtl">
-            <h1>سلطنة عمان</h1>
-            <h1>شرطة عمان السلطانية الإدارة العامة للجمارك</h1>
+
+        <!-- RIGHT: Arabic -->
+        <div class="field-col rtl">
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">15698</span>
+            <span class="field-label ar">:رقم التصريح</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">02-Apr-2026</span>
+            <span class="field-label ar">:تاريخ الإصدار</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">ASTRID</span>
+            <span class="field-label ar">:اسم السفينة</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">9246475</span>
+            <span class="field-label ar">:رقم السفينة</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">PANAMA</span>
+            <span class="field-label ar">:العلم</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">TANKER</span>
+            <span class="field-label ar">:هيئة التصنيف</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">Khur Al-Zubair Port</span>
+            <span class="field-label ar">:اسم ميناء المغادرة</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">Oil Tanker</span>
+            <span class="field-label ar">:نوع السفينة</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">30008</span>
+            <span class="field-label ar">:الحمولة الطنية الاجمالية المسجلة</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value agency">شركة مرجان البحر للخدمات البحا</span>
+            <span class="field-label ar">:اسم الوكالة</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">17-Mar-2026</span>
+            <span class="field-label ar">:تاريخ الوصول</span>
+          </div>
+          <div class="field-row" style="justify-content:flex-end;">
+            <span class="field-value">02-Apr-2026</span>
+            <span class="field-label ar">:تاريخ المغادرة</span>
+          </div>
         </div>
+
+      </div>
     </div>
 
-    <div class="text-center">
-        <h1 class="bold">SAIL CERTIFICATE / إذن الإبحار</h1>
-        <h2>DEPARTURE CERTIFICATE <span class="rtl">شهادة المغادرة</span></h2>
-    </div>
+    <div class="divider"></div>
 
-    <p class="text-right sub-text">Clearance to below mentioned Vessel. The particulars are: <span class="rtl">تخليص السفينة المذكورة أدناه. التفاصيل كما يلي:</span></p>
-
-    <table>
-        <tr>
-            <td width="50%">
-                <span class="label">CERTIFICATE NUMBER</span>
-                <span class="value">PTS220925322532</span>
-            </td>
-            <td class="text-right rtl" width="50%">
-                <span class="label">رقم الشهادة</span>
-                <span class="value">PTS220925322532</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="label">VESSEL NAME</span>
-                <span class="value">HAMDAN AB</span>
-            </td>
-            <td class="text-right rtl">
-                <span class="label">اسم السفينة</span>
-                <span class="value">حمدان</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="label">VESSEL NATIONALITY / FLAG</span>
-                <span class="value">PANAMA</span>
-            </td>
-            <td class="text-right rtl">
-                <span class="label">جنسية السفينة / العلم</span>
-                <span class="value">بنما</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="label">PORT OF DEPARTURE</span>
-                <span class="value">Shinas Port</span>
-            </td>
-            <td class="text-right rtl">
-                <span class="label">ميناء المغادرة</span>
-                <span class="value">ميناء شناص</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="label">NEXT PORT OF CALL</span>
-                <span class="value">Ajman</span>
-            </td>
-            <td class="text-right rtl">
-                <span class="label">الميناء التالي</span>
-                <span class="value">ميناء وجمارك عجمان</span>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <span class="label">ESTIMATED TIME OF DEPARTURE</span>
-                <span class="value">22/09/2025 13:00</span>
-            </td>
-            <td class="text-right rtl">
-                <span class="label">الزمن المتوقع للمغادرة</span>
-                <span class="value">22/09/2025 13:00</span>
-            </td>
-        </tr>
-    </table>
-
-    <table class="review-table">
-        <tr class="bold">
-            <td width="25%">OFFICER / AUTHORITY<br><span class="rtl">الجهة المسؤولة</span></td>
-            <td width="20%">REVIEW STATUS<br><span class="rtl">حالة المراجعة</span></td>
-            <td>REMARKS<br><span class="rtl">ملاحظات</span></td>
-        </tr>
-        <tr>
-            <td>PORT AUTHORITY</td>
-            <td class="bold">APPROVED</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>COAST GUARD</td>
-            <td class="bold">APPROVED</td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>CUSTOMS OFFICER</td>
-            <td class="bold">APPROVED</td>
-            <td class="crew-text">This ship has carried out a food supply operation at sea and not on the dock and the ship has not been inspected by customs.</td>
-        </tr>
-    </table>
-
-    <div class="footer">
-        <p>Printed on: 22/09/2025 01:31</p>
-        <p class="bold">Computer Generated Report No Signature Required</p>
-        <p class="text-right">Page 1 of 2</p>
-    </div>
-
-    <div class="page-break"></div>
-
-    <div class="text-center">
-        <h1 class="bold">IMO CREW LIST / طاقم السفينة</h1>
-    </div>
-
-    <table>
-        <tr>
-            <td><span class="label">VESSEL NAME:</span> HAMDAN AB</td>
-            <td><span class="label">IMO NUMBER:</span> 9331103</td>
-            <td class="text-right rtl">رقم المنظمة البحرية الدولية: 9331103</td>
-        </tr>
-    </table>
-
-    <table class="crew-text">
-        <tr class="bold">
-            <th>SEQ</th>
-            <th>NAME / الاسم</th>
-            <th>POSITION</th>
-            <th>NATIONALITY</th>
-            <th>PASSPORT / DOC</th>
-            <th>EXPIRY</th>
-        </tr>
-        <tr>
-            <td>1</td>
-            <td class="text-right rtl">محمد آصف</td>
-            <td>Captain / ربان</td>
-            <td>PAKISTAN</td>
-            <td>AS3174333</td>
-            <td>14/09/2026</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td class="text-right rtl">عبدالحميد غوري</td>
-            <td>Crew / طاقم</td>
-            <td>PAKISTAN</td>
-            <td>AC4129965</td>
-            <td>08/02/2033</td>
-        </tr>
-        </table>
-
+    <!-- QR CODE SECTION -->
     <div class="qr-section">
-        <img src="PermissionTodSailPrintArabic_files/Image_009.jpg" alt="QR Code" class="qr-code">
-        <p class="footer-note">
-            For verifying this document, please scan the QR code to view Original Document on Bayan system.<br>
-            <span class="rtl">للتحقق من الوثيقة، يجب مسح رمز الاستجابة السريعة للاطلاع على الوثيقة الأصلية من نظام بيان.</span>
-        </p>
+      <div class="qr-box">
+        <svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" shape-rendering="crispEdges">
+          <rect x="0" y="0" width="56" height="56" fill="#000000"/>
+          <rect x="8" y="8" width="40" height="40" fill="#ffffff"/>
+          <rect x="16" y="16" width="24" height="24" fill="#000000"/>
+          <rect x="104" y="0" width="56" height="56" fill="#000000"/>
+          <rect x="112" y="8" width="40" height="40" fill="#ffffff"/>
+          <rect x="120" y="16" width="24" height="24" fill="#000000"/>
+          <rect x="0" y="104" width="56" height="56" fill="#000000"/>
+          <rect x="8" y="112" width="40" height="40" fill="#ffffff"/>
+          <rect x="16" y="120" width="24" height="24" fill="#000000"/>
+          <rect x="64" y="0" width="8" height="8" fill="#000000"/>
+          <rect x="80" y="0" width="8" height="8" fill="#000000"/>
+          <rect x="72" y="8" width="8" height="8" fill="#000000"/>
+          <rect x="64" y="16" width="8" height="8" fill="#000000"/>
+          <rect x="88" y="16" width="8" height="8" fill="#000000"/>
+          <rect x="72" y="24" width="8" height="8" fill="#000000"/>
+          <rect x="80" y="32" width="8" height="8" fill="#000000"/>
+          <rect x="64" y="40" width="8" height="8" fill="#000000"/>
+          <rect x="88" y="40" width="8" height="8" fill="#000000"/>
+          <rect x="72" y="48" width="8" height="8" fill="#000000"/>
+          <rect x="64" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="80" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="96" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="104" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="120" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="136" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="144" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="152" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="0" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="16" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="32" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="48" y="64" width="8" height="8" fill="#000000"/>
+          <rect x="72" y="72" width="8" height="8" fill="#000000"/>
+          <rect x="88" y="72" width="8" height="8" fill="#000000"/>
+          <rect x="104" y="72" width="8" height="8" fill="#000000"/>
+          <rect x="120" y="72" width="8" height="8" fill="#000000"/>
+          <rect x="136" y="80" width="8" height="8" fill="#000000"/>
+          <rect x="64" y="80" width="8" height="8" fill="#000000"/>
+          <rect x="80" y="80" width="8" height="8" fill="#000000"/>
+          <rect x="96" y="80" width="8" height="8" fill="#000000"/>
+          <rect x="112" y="80" width="8" height="8" fill="#000000"/>
+          <rect x="144" y="80" width="8" height="8" fill="#000000"/>
+          <rect x="152" y="80" width="8" height="8" fill="#000000"/>
+          <rect x="72" y="88" width="8" height="8" fill="#000000"/>
+          <rect x="88" y="88" width="8" height="8" fill="#000000"/>
+          <rect x="104" y="88" width="8" height="8" fill="#000000"/>
+          <rect x="128" y="88" width="8" height="8" fill="#000000"/>
+          <rect x="64" y="96" width="8" height="8" fill="#000000"/>
+          <rect x="80" y="96" width="8" height="8" fill="#000000"/>
+          <rect x="96" y="96" width="8" height="8" fill="#000000"/>
+          <rect x="112" y="96" width="8" height="8" fill="#000000"/>
+          <rect x="120" y="96" width="8" height="8" fill="#000000"/>
+          <rect x="136" y="96" width="8" height="8" fill="#000000"/>
+          <rect x="152" y="96" width="8" height="8" fill="#000000"/>
+          <rect x="64" y="104" width="8" height="8" fill="#000000"/>
+          <rect x="80" y="104" width="8" height="8" fill="#000000"/>
+          <rect x="96" y="104" width="8" height="8" fill="#000000"/>
+          <rect x="112" y="112" width="8" height="8" fill="#000000"/>
+          <rect x="128" y="112" width="8" height="8" fill="#000000"/>
+          <rect x="144" y="112" width="8" height="8" fill="#000000"/>
+          <rect x="64" y="120" width="8" height="8" fill="#000000"/>
+          <rect x="80" y="120" width="8" height="8" fill="#000000"/>
+          <rect x="96" y="120" width="8" height="8" fill="#000000"/>
+          <rect x="120" y="120" width="8" height="8" fill="#000000"/>
+          <rect x="136" y="120" width="8" height="8" fill="#000000"/>
+          <rect x="152" y="120" width="8" height="8" fill="#000000"/>
+          <rect x="64" y="128" width="8" height="8" fill="#000000"/>
+          <rect x="88" y="128" width="8" height="8" fill="#000000"/>
+          <rect x="104" y="128" width="8" height="8" fill="#000000"/>
+          <rect x="128" y="128" width="8" height="8" fill="#000000"/>
+          <rect x="64" y="136" width="8" height="8" fill="#000000"/>
+          <rect x="72" y="144" width="8" height="8" fill="#000000"/>
+          <rect x="88" y="144" width="8" height="8" fill="#000000"/>
+          <rect x="104" y="144" width="8" height="8" fill="#000000"/>
+          <rect x="120" y="144" width="8" height="8" fill="#000000"/>
+          <rect x="136" y="144" width="8" height="8" fill="#000000"/>
+          <rect x="152" y="144" width="8" height="8" fill="#000000"/>
+          <rect x="64" y="152" width="8" height="8" fill="#000000"/>
+          <rect x="80" y="152" width="8" height="8" fill="#000000"/>
+          <rect x="96" y="152" width="8" height="8" fill="#000000"/>
+          <rect x="112" y="152" width="8" height="8" fill="#000000"/>
+          <rect x="128" y="152" width="8" height="8" fill="#000000"/>
+          <rect x="144" y="152" width="8" height="8" fill="#000000"/>
+        </svg>
+      </div>
+      <div class="qr-label">مسح الكود QR للتحقق</div>
     </div>
 
-    <div class="footer text-right">
-        <p>Page 2 of 2</p>
+    <!-- CLEARANCE STATEMENT -->
+    <div class="clearance-statement">
+      <div class="ar-statement">يسمح للسفينة المذكورة اعلاه بمغادرة المياه الاقليمية العراقية</div>
+      <div class="en-statement">The above-mentioned vessel is allowed to Departure from Iraqi territorial waters.</div>
     </div>
 
+    <hr class="divider" />
+
+    <!-- SYSTEM NOTE -->
+    <div class="system-note">
+      <span class="en">This is a system-generated Document . no signature is required.</span>
+      <span class="ar">هذه الوثيقة مستخرجة من نظام التصاريح ولا تحتاج الي توقيع</span>
+    </div>
+
+  </div>
 </body>
 </html>

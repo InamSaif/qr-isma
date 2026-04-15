@@ -183,7 +183,7 @@
             <div class="flex justify-between items-center mb-6">
                 <div>
                     <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Document Builder</p>
-                    <h3 class="text-2xl font-bold text-slate-900" id="modalTitle">Create New Document</h3>
+                    <h3 class="text-2xl font-bold text-slate-900" id="modalTitle">Create New Port Clearance</h3>
                 </div>
                 <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -198,150 +198,27 @@
 
                 <div class="bg-gradient-to-r from-primary/10 to-secondary/10 border border-primary/20 p-4 rounded-xl">
                     <p class="text-sm text-slate-800">
-                        <strong class="text-primary">Quick Start:</strong> Fill in the fields below to generate your Sail Certificate PDF.
+                        <strong class="text-primary">Quick Start:</strong> Fill in the vessel and clearance information below to generate your Port Clearance PDF.
                     </p>
                 </div>
 
-                <!-- Sail Certificate Fields -->
+                <!-- Port Clearance Fields -->
                 <div class="rounded-xl border border-slate-200 bg-slate-50 p-5">
                     <div class="flex items-center justify-between mb-4">
                         <div>
-                            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Certificate</p>
-                            <h3 class="text-lg font-semibold text-slate-900">Sail Certificate Information</h3>
+                            <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Document</p>
+                            <h3 class="text-lg font-semibold text-slate-900">Port Clearance Information</h3>
                         </div>
                         <span class="px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-700">Required</span>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <!-- Certificate Number -->
-                        <div class="md:col-span-2">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Certificate Number</label>
-                            <input type="text" id="CERTIFICATE_NUMBER"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="PTS220925322532">
-                        </div>
-
-                        <!-- Vessel Name -->
+                        <!-- Permit Number -->
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Name (EN)</label>
-                            <input type="text" id="VESSEL_NAME"
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Permit Number</label>
+                            <input type="text" id="PERMIT_NUMBER"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="HAMDAN AB">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Name (AR)</label>
-                            <input type="text" id="VESSEL_NAME_AR" dir="rtl"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="حمدان">
-                        </div>
-
-                        <!-- Vessel Nationality -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Nationality (EN)</label>
-                            <input type="text" id="VESSEL_NATIONALITY"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="PANAMA">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Nationality (AR)</label>
-                            <input type="text" id="VESSEL_NATIONALITY_AR" dir="rtl"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="بنما">
-                        </div>
-
-                        <!-- Flag -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Flag (EN)</label>
-                            <input type="text" id="FLAG"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="PANAMA">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Flag (AR)</label>
-                            <input type="text" id="FLAG_AR" dir="rtl"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="بنما">
-                        </div>
-
-                        <!-- Vessel Agent Name -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Agent Name (EN)</label>
-                            <input type="text" id="VESSEL_AGENT_NAME"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="Arabian Sea Petroleum">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Agent Name (AR)</label>
-                            <input type="text" id="VESSEL_AGENT_NAME_AR" dir="rtl"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="بحر العرب للبترول">
-                        </div>
-
-                        <!-- Port of Departure -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Port of Departure (EN)</label>
-                            <input type="text" id="PORT_OF_DEPARTURE"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="Shinas Port">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Port of Departure (AR)</label>
-                            <input type="text" id="PORT_OF_DEPARTURE_AR" dir="rtl"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="ميناء شناص">
-                        </div>
-
-                        <!-- Next Port of Call -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Next Port of Call (EN)</label>
-                            <input type="text" id="NEXT_PORT_OF_CALL"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="Ajman">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Next Port of Call (AR)</label>
-                            <input type="text" id="NEXT_PORT_OF_CALL_AR" dir="rtl"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="ميناء صحار وجمّان">
-                        </div>
-
-                        <!-- Voyage Number -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Voyage Number</label>
-                            <input type="text" id="VOYAGE_NUMBER"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="25831">
-                        </div>
-
-                        <!-- Captain Name -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Captain Name (EN)</label>
-                            <input type="text" id="CAPTAIN_NAME"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="Muhammad Asif">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Captain Name (AR)</label>
-                            <input type="text" id="CAPTAIN_NAME_AR" dir="rtl"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="محمد اصيف">
-                        </div>
-
-                        <!-- ETD -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Estimated Time of
-                                Departure</label>
-                            <input type="text" id="ETD"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="22/09/2025 13:00">
-                        </div>
-
-                        <!-- IMO Number -->
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">IMO Number</label>
-                            <input type="text" id="IMO_NUMBER"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="9331103">
+                                placeholder="15698">
                         </div>
 
                         <!-- Issuance Date -->
@@ -349,21 +226,93 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Issuance Date</label>
                             <input type="text" id="ISSUANCE_DATE"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                                placeholder="22/09/2025 01:30">
+                                placeholder="02-Apr-2026">
                         </div>
-                    </div>
 
-                    <!-- Customs Remarks -->
-                    <div class="mt-4">
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Customs Remarks</label>
-                        <textarea id="CUSTOMS_REMARKS" rows="2"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-                            placeholder="This ship has carried out a food supply operation at sea..."></textarea>
+                        <!-- Vessel Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Name</label>
+                            <input type="text" id="VESSEL_NAME"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="ASTRID">
+                        </div>
+
+                        <!-- Vessel IMO -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel IMO</label>
+                            <input type="text" id="VESSEL_IMO"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="9246475">
+                        </div>
+
+                        <!-- Flag -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Flag</label>
+                            <input type="text" id="FLAG"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="PANAMA">
+                        </div>
+
+                        <!-- Classification Society -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Classification Society</label>
+                            <input type="text" id="CLASSIFICATION_SOCIETY"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="TANKER">
+                        </div>
+
+                        <!-- Departure Port -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Departure Port Name</label>
+                            <input type="text" id="DEPARTURE_PORT"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Khur Al-Zubair Port">
+                        </div>
+
+                        <!-- Vessel Type -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel Type</label>
+                            <input type="text" id="VESSEL_TYPE"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="Oil Tanker">
+                        </div>
+
+                        <!-- Vessel GRT -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Vessel GRT</label>
+                            <input type="text" id="VESSEL_GRT"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="30008">
+                        </div>
+
+                        <!-- Agency Name -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Agency Name</label>
+                            <input type="text" id="AGENCY_NAME"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="شركة مرجان البحر للخدمات البحا">
+                        </div>
+
+                        <!-- Arrival Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Arrival Date</label>
+                            <input type="text" id="ARRIVAL_DATE"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="17-Mar-2026">
+                        </div>
+
+                        <!-- Departure Date -->
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Departure Date</label>
+                            <input type="text" id="DEPARTURE_DATE"
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+                                placeholder="02-Apr-2026">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Crew Members Section -->
-                <div class="rounded-xl border border-slate-200 bg-white p-5">
+                <!-- Crew Members Section - Hidden for Port Clearance -->
+                <!-- <div class="rounded-xl border border-slate-200 bg-white p-5">
                     <div class="flex justify-between items-center mb-4">
                         <div>
                             <p class="text-xs uppercase tracking-[0.2em] text-slate-500">Crew</p>
@@ -375,11 +324,10 @@
                         </button>
                     </div>
                     <div id="crewMembersContainer" class="space-y-4">
-                        <!-- Crew members will be added here dynamically -->
                         <p class="text-sm text-gray-600 text-center py-4">No crew members added yet. Click "Add Crew
                             Member" to start.</p>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Legacy fields removed -->
 

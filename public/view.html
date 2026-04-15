@@ -5,265 +5,181 @@
     <meta name="viewport" content="width=800">
     <title>eCustoms Services Portal - Verify QR</title>
     <style>
-        :root {
-            --primary-teal: #5682c2;
-            --accent-yellow: #f5c842;
-            --bg-header: #fff;
-            --text-color: #333;
-            --border-color: #d1d9e6;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        body { 
-            margin: 0; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: white !important;
-            color: var(--text-color); 
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #0066cc;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .status-box {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
             display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
+            align-items: flex-start;
+            gap: 15px;
         }
 
-        .pdf-viewer-wrapper {
-            /* max-width: 800px; */
-            background-color: white !important;
-            height: 100vh;
-        }
-
-        .pdf-viewer-wrapper {
+        .status-icon {
+            width: 40px;
+            height: 40px;
+            background: #4caf50;
+            color: white;
+            border-radius: 50%;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+            font-weight: bold;
         }
 
-        /* Top Bar */
-        .top-bar { 
-            display: flex; 
-            justify-content: flex-end; 
-            padding: 8px 20px; 
-            background: #fff; 
-            font-size: 14px; 
-            border-bottom: 1px solid var(--border-color);
+        .status-content h3 {
+            font-size: 16px;
+            color: #2e7d32;
+            margin-bottom: 5px;
         }
 
-        .lang-switch { 
-            cursor: pointer; 
-            color: #555; 
-            text-decoration: none; 
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            user-select: none;
+        .status-content p {
+            font-size: 14px;
+            color: #558b2f;
+            line-height: 1.4;
         }
 
-        .lang-switch:hover {
-            color: var(--primary-teal);
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
         }
 
-        .lang-active {
+        .data-table tr {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .data-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .data-table td {
+            padding: 16px 0;
+            font-size: 14px;
+        }
+
+        .data-table td:first-child {
+            color: #666;
+            font-weight: 500;
+            width: 40%;
+        }
+
+        .data-table td:last-child {
+            color: #333;
             font-weight: 600;
-            color: #000;
+            text-align: right;
         }
 
-        .chevron {
-            font-size: 10px;
-            margin-left: 2px;
+        .error-box {
+            background: #ffebee;
+            border: 2px solid #f44336;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            color: #c62828;
         }
 
-        [dir="rtl"] .chevron {
-            margin-left: 0;
-            margin-right: 2px;
+        .loading {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
         }
 
-        /* Header */
-        .header-main { 
-            background: var(--bg-header); 
-            text-align: center; 
-            padding: 25px 20px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-            position: relative; 
-            border-bottom: 1px solid var(--border-color);
-            width: 800px;
+        .lang-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #0066cc;
         }
 
-        .logos-container { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 30px; 
-            margin-bottom: 20px; 
-        }
-
-        .flex-cont {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .logo {
-            height: 90px;
-            object-fit: contain;
-        }
-
-        .divider { 
-            width: 2px; 
-            height: 70px; 
-            background: #bdc3c7; 
-        }
-
-        .portal-title { 
-            color: var(--primary-teal); 
-            font-size: 26px; 
-            font-weight: 500; 
-            margin: 0; 
-            padding-bottom: 6px; 
-            display: inline-block; 
-            letter-spacing: 0.5px;
-        }
-
-        /* Section Bar */
-        .section-bar { 
-            background: var(--accent-yellow); 
-            padding: 12px 25px; 
-            display: flex; 
-            align-items: center; 
-            font-weight: 600; 
-            font-size: 16px; 
-            color: #222; 
-            width: 800px;
-        }
-
-        .section-bar svg { 
-            width: 20px; 
-            height: 20px; 
-            margin-right: 12px; 
-            transition: transform 0.3s; 
-        }
-
-        [dir="rtl"] .section-bar svg { 
-            margin-right: 0; 
-            margin-left: 12px; 
-            transform: scaleX(-1); 
-        }
-
-        /* PDF Viewer Container */
-        .content-area { 
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            width: 800px; 
-            background: #f9f9f9;
-            padding: 12px 25px;
-        }
-
-        .pdf-container { 
-            flex: 1; 
-            border: none; 
-        }
-
-        .error-message { 
-            text-align: center; 
-            padding: 60px 20px; 
-            color: #d9534f; 
-            font-size: 18px; 
-            background: #fff;
-            margin-top: 20px;
-        }
-
-        .content-area, .content-area iframe {
-            height: 500px;
-        }
-        
-        /* Use max-device-width to target phone screens even when viewport is 800px */
-        @media screen and (max-device-width: 768px) {
-            .pdf-viewer-wrapper {
-                align-items: normal;
-                justify-content: normal;
-                height: 50vh;
-            }
-        }
-/* 
-        @media screen and (max-width: 576px) {
-            .pdf-viewer-wrapper, .header-main, .section-bar, .content-area {
-                width: 100%;
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 20px;
             }
 
-            .header-main{ 
-                padding-left: 0;
-                padding-right: 0;
+            .title {
+                font-size: 20px;
             }
 
-            .header-main .logos-container #banner-img {
-                width: 100%;
+            .data-table td {
+                padding: 12px 0;
             }
-            .section-bar {
-                justify-content: center !important;
-                padding-right: 0;
-                padding-left: 0;
-            }
-            .content-area{
-                padding-right: 0;
-                padding-left: 0;
-            }
-            .portal-title {
-                font-size: 18px;
-            }
-
-        } */
+        }
     </style>
 </head>
 <body>
-    <div class="pdf-viewer-wrapper">
+    <!-- <div class="lang-switch" onclick="toggleLanguage()" style="cursor: pointer; user-select: none;">
+        <span id="lang-text-en" style="font-weight: 600;">English</span> | <span id="lang-text-ar">العربية</span>
+    </div> -->
 
-    <!-- Main Header -->
-    <header class="header-main">
-        
-        <div class="logos-container">
-            <img id="banner-img" src="https://www.customs.gov.om/esw/javax.faces.resource/esw-header-banner.jpg.xhtml?ln=imgs" />
+    <div class="container" id="main-content">
+        <h1 class="title" id="page-title">EXIT PERMIT Verification</h1>
+        <div id="content-area">
+            <!-- Content will be loaded here -->
         </div>
-        <div class="flex-cont">
-            <div></div>
-            <h1 class="portal-title" id="portal-title-text">eCustoms Services Portal</h1>
-
-            <div class="lang-switch" onclick="toggleLanguage()">
-                <span id="lang-text-en" class="lang-active">English</span> 
-                <span>|</span> 
-                <span id="lang-text-ar">العربية</span> 
-                <span class="chevron">▼</span>
-            </div>
-        </div>
-    </header>
-
-    <!-- Accent Bar -->
-    <div class="section-bar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="15 18 9 12 15 6"></polyline>
-        </svg>
-        <span id="section-title-text">Verify Scanned QR Code Print</span>
     </div>
-
-    <!-- Dynamic Content Area -->
-    <div class="content-area" id="content-area">
-        <!-- PDF Iframe or Error Message will be injected here -->
-    </div>
-</div>
 
     <script>
-        // Language Dictionary
         const translations = {
             en: {
-                title: "eCustoms Services Portal",
-                section: "Verify Scanned QR Code Print",
-                error: "No certificate identifier provided. Please scan a valid QR code.",
-                bannerImg: "https://www.customs.gov.om/esw/javax.faces.resource/esw-header-banner.jpg.xhtml?ln=imgs"
+                title: "EXIT PERMIT Verification",
+                validStatus: "VALID EXIT PERMIT",
+                validMessage: "This exit permit is currently valid and active.",
+                permitId: "Permit ID",
+                vessel: "Vessel",
+                imo: "IMO",
+                port: "Port",
+                arrivalDate: "Arrival Date",
+                departureDate: "Departure Date",
+                loading: "Loading permit information...",
+                error: "Unable to load permit information. Please check the QR code and try again."
             },
             ar: {
-                title: "بوابة خدمات الجمارك الإلكترونية",
-                section: "التحقق من طباعة رمز الاستجابة السريعة (QR) الممسوح ضوئياً",
-                error: "لم يتم توفير معرف الشهادة. يرجى مسح رمز QR صالح.",
-                bannerImg: "https://www.customs.gov.om/esw/javax.faces.resource/esw-header-banner_ar.jpg.xhtml?ln=imgs"
+                title: "التحقق من رخصة المغادرة",
+                validStatus: "رخصة المغادرة سارية",
+                validMessage: "رخصة المغادرة هذه سارية وفعالة حالياً.",
+                permitId: "رقم الرخصة",
+                vessel: "السفينة",
+                imo: "رقم منظمة البحرية الدولية",
+                port: "الميناء",
+                arrivalDate: "تاريخ الوصول",
+                departureDate: "تاريخ المغادرة",
+                loading: "جاري تحميل معلومات الرخصة...",
+                error: "لا يمكن تحميل معلومات الرخصة. يرجى التحقق من رمز الاستجابة السريعة والمحاولة مجدداً."
             }
         };
 
@@ -271,82 +187,115 @@
 
         function toggleLanguage() {
             currentLang = currentLang === 'en' ? 'ar' : 'en';
-            const textData = translations[currentLang];
-            
-            // Update Texts
-            document.getElementById('portal-title-text').textContent = textData.title;
-            document.getElementById('section-title-text').textContent = textData.section;
-            
-            const errorEl = document.getElementById('error-msg');
-            if (errorEl) {
-                errorEl.textContent = textData.error;
-            }
-
-            // Update Active Lang UI
-            const langEn = document.getElementById('lang-text-en');
-            const langAr = document.getElementById('lang-text-ar');
-            if (currentLang === 'en') {
-                langEn.classList.add('lang-active');
-                langAr.classList.remove('lang-active');
-            } else {
-                langEn.classList.remove('lang-active');
-                langAr.classList.add('lang-active');
-            }
-
-            // Update Document Direction
             document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
             document.documentElement.setAttribute('lang', currentLang);
-
-            // Swap Banner Image
-            document.getElementById('banner-img').src = textData.bannerImg;
+            renderContent();
         }
 
-        // Initialize Page
-        window.addEventListener('DOMContentLoaded', () => {
-            let certId = '';
-            
-            // First check path param, e.g. /view/port-clearance-ABC-123
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            try {
+                const date = new Date(dateStr);
+                if (currentLang === 'ar') {
+                    return date.toLocaleDateString('ar-SA');
+                } else {
+                    return date.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+                }
+            } catch {
+                return dateStr;
+            }
+        }
+
+        function renderContent(data = null) {
+            const contentArea = document.getElementById('content-area');
+            const t = translations[currentLang];
+            document.getElementById('page-title').textContent = t.title;
+
+            if (data) {
+                const html = `
+                    <div class="status-box">
+                        <div class="status-icon">✓</div>
+                        <div class="status-content">
+                            <h3>${t.validStatus}</h3>
+                            <p>${t.validMessage}</p>
+                        </div>
+                    </div>
+
+                    <table class="data-table">
+                        <tr>
+                            <td>${t.permitId}</td>
+                            <td>${data.PERMIT_NUMBER || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>${t.vessel}</td>
+                            <td>${data.VESSEL_NAME || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>${t.imo}</td>
+                            <td>${data.VESSEL_IMO || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>${t.port}</td>
+                            <td>${data.DEPARTURE_PORT || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>${t.arrivalDate}</td>
+                            <td>${formatDate(data.ARRIVAL_DATE)}</td>
+                        </tr>
+                        <tr>
+                            <td>${t.departureDate}</td>
+                            <td>${formatDate(data.DEPARTURE_DATE)}</td>
+                        </tr>
+                    </table>
+                `;
+                contentArea.innerHTML = html;
+            } else if (data === null) {
+                contentArea.innerHTML = `<div class="loading">${t.loading}</div>`;
+            } else {
+                contentArea.innerHTML = `<div class="error-box">${t.error}</div>`;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            // Get document ID from URL path (e.g., /view/69dfa31566bb069ea2aed4a5)
+            let docId = '';
             const pathParts = window.location.pathname.split('/');
             const viewIndex = pathParts.findIndex(part => part === 'view');
-            if (viewIndex !== -1 && pathParts.length > viewIndex + 1 && pathParts[viewIndex + 1]) {
-                certId = pathParts[viewIndex + 1];
+            if (viewIndex !== -1 && pathParts.length > viewIndex + 1) {
+                docId = pathParts[viewIndex + 1];
             } else {
-                // Fallback to query param
-                const urlParams = new URLSearchParams(window.location.search);
-                certId = urlParams.get('cert') || urlParams.get('serialNo');
+                const params = new URLSearchParams(window.location.search);
+                docId = params.get('id') || params.get('cert') || params.get('serialNo');
             }
 
-            const contentArea = document.getElementById('content-area');
+            if (!docId) {
+                renderContent(false);
+                return;
+            }
 
-            if (certId && certId.trim() !== '') {
-                // Normalize certId to use in the exact format your PDF is saved.
-                // Assuming it's typically saved as `port-clearance-XXXXX.pdf`
-                let safeCertId = certId.trim();
+            try {
+                renderContent(null); // Show loading
                 
-                // If it doesn't already have the prefix, add it, because the route serves from `/pdfs/port-clearance-UUID.pdf`
-                let filename = safeCertId;
-                if (!filename.startsWith('port-clearance-')) {
-                    filename = `port-clearance-${filename}`;
+                // Fetch document from public API endpoint
+                const response = await fetch(`/api/documents/public/${docId}`);
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.success && result.document && result.document.formData) {
+                        // Extract formData from the document
+                        renderContent(result.document.formData);
+                    } else {
+                        renderContent(false);
+                    }
+                } else {
+                    renderContent(false);
                 }
-                if (!filename.endsWith('.pdf')) {
-                    filename = `${filename}.pdf`;
-                }
-
-                // Directly construct the iframe to load the PDF from your GET /pdfs/:filename route
-                const iframe = document.createElement('iframe');
-                iframe.src = `/pdfs/${filename}`;
-                iframe.className = 'pdf-container';
-                iframe.title = 'Certificate PDF Viewer';
-                contentArea.appendChild(iframe);
-            } else {
-                // Show Error immediately
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'error-message';
-                errorDiv.id = 'error-msg';
-                errorDiv.textContent = translations[currentLang].error;
-                contentArea.appendChild(errorDiv);
+            } catch (error) {
+                console.error('Error fetching document:', error);
+                renderContent(false);
             }
         });
+    </script>
+        
     </script>
 </body>
 </html>
