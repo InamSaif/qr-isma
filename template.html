@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="preconnect" href="//fdn.fontcdn.ir">
+    <link href="https://db.onlinewebfonts.com/c/752209e187a9d84bf9fb3a07f2ccfae3?family=B+Nazanin+Bold" rel="stylesheet"> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@100..900&display=swap" rel="stylesheet">
+    <title>Port Clearance (PC) Template - Fillable</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            page-break-inside: avoid;
+        }
+
+        body {
+            font-family: Arial, Tahoma, 'Noto Sans Arabic', 'Droid Arabic Kufi', sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Force font weight for all Arabic/Farsi text */
+        .rtl,
+        .farsi-rtl,
+        [class*="fa"] {
+            font-weight: 700 !important;
+            font-family: "Vazirmatn" !important;
+            font-size: 14px;
+        }
+
+        .rtl strong,
+        .farsi-rtl strong {
+            font-weight: 900 !important;
+        }
+
+        .rtl input[type="text"],
+        .farsi-rtl input[type="text"] {
+            font-weight: 700 !important;
+        }
+
+        .document-container {
+            width: 100%;
+            max-width: 850px;
+            background-color: #ffffff;
+            /* border: 4px solid #00A39C; */
+            border-radius: 0px;
+            /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+            font-size: 11.5px;
+            page-break-inside: avoid;
+            page-break-after: avoid;
+        }
+
+
+        input[type="text"],
+        textarea {
+            width: 70%;
+            /* Adjusted width for inputs inside 50% cell */
+            padding: 0;
+            border: none;
+            font-family: inherit;
+            font-size: 12px;
+            color: #000000;
+            background-color: transparent;
+            box-shadow: none;
+            outline: none;
+            cursor: text;
+        }
+
+        .rtl input[type="text"] {
+            text-align: right;
+            font-weight: 700 !important;
+        }
+
+        .highlight-row input[type="text"] {
+            background-color: #EAF9F8;
+        }
+
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 15px 0 15px;
+            align-items: flex-start;
+            border: 3px solid #278081;
+            border-bottom: none;
+        }
+
+        .header-col {
+            padding: 0 5px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            line-height: 1.0;
+        }
+
+        .header-left,
+        .header-right {
+            width: 10%;
+        }
+
+        .header-center {
+            width: 80%;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        .header-center p {
+            margin: 2px 0;
+            line-height: 1.1;
+        }
+
+        .farsi-rtl {
+            direction: rtl;
+            text-align: center;
+            font-weight: 700 !important;
+        }
+
+        .farsi-rtl strong {
+            font-weight: 900 !important;
+        }
+
+        .logo-box1 {
+            border: 1px solid #000;
+            padding: 3px;
+            font-size: 10px;
+            line-height: 1.3;
+            margin-top: 8px;
+        }
+
+        .logo-box {
+            border: 1px solid #000;
+            padding: 3px;
+            font-size: 10px;
+            line-height: 1.3;
+            margin-top: 8px;
+        }
+
+        .main-title-block {
+            margin-top: 8px;
+            padding-top: 3px;
+            text-align: center;
+        }
+
+        .main-title-block h1 {
+            font-size: 22px;
+            margin: 0;
+        }
+
+        .main-title-block p {
+            font-size: 24px;
+            margin: 3px 0 6px 0;
+        }
+
+
+        .marine-affairs-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px 10px 15px;
+            font-size: 17px;
+            font-weight: bold;
+            /* border-bottom: 3px solid #7e7d7d; */
+            border: 3px solid #278081;
+            border-bottom: none;
+            border-top: none;
+        }
+
+        .marine-affairs-row>div {
+            flex-grow: 1;
+        }
+
+        .marine-affairs-row .farsi-rtl {
+            text-align: right;
+            font-weight: 900 !important;
+        }
+
+        .marine-affairs-row strong {
+            font-weight: 900 !important;
+        }
+
+        .marine-affairs-row input {
+            font-weight: 700 !important;
+        }
+
+
+
+        .data-table {
+            border-collapse: collapse;
+            width: 100%;
+            /* border: 4px solid #278081; */
+            border-top: none;
+            border-bottom: none;
+        }
+
+        .data-row {
+            display: flex;
+            border-bottom: 2px solid #7e7d7d;
+            min-height: 26px;
+        }
+
+        .data-row:nth-child(odd) {
+            background-color: #f5f5f5;
+        }
+
+        .data-row:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        .highlight-row {
+            background-color: #EAF9F8 !important;
+            border-bottom: 1px solid #00A39C;
+        }
+
+        /* **FINAL TWO-COLUMN CSS** */
+        /* Only two main columns now: 50% for EN side, 50% for FA side */
+        .cell-label-en {
+            width: 50% !important;
+            border-right: 2px solid #7e7d7d !important;
+            justify-content: space-between;
+            /* Align content to sides */
+        }
+
+        .cell-label-fa {
+            width: 50% !important;
+            justify-content: space-between;
+            /* Align content to sides */
+        }
+
+        /* Hidden columns */
+        .cell-value-en,
+        .cell-value-fa {
+            display: none;
+        }
+
+
+        .cell {
+            padding: 4px 12px;
+            box-sizing: border-box;
+            border-right: none;
+            /* Removed for the two-column structure */
+            border-bottom: 0px solid #7e7d7d;
+            /* Keep the horizontal line */
+            display: flex;
+            align-items: center;
+            line-height: 1.4;
+        }
+
+        /* Fix for the signature row which had an incorrect border-bottom */
+        .data-row:last-of-type {
+            /* border-bottom: 4px solid #00A39C !important; */
+        }
+
+        /* Re-apply background color for signature row from the latest user input */
+        .signature-row {
+            background-color: #f5f5f5 !important;
+        }
+
+        .data-row .cell:last-child {
+            border-right: none;
+        }
+
+        .cell.label {
+            font-weight: bold;
+        }
+
+        .cell.rtl {
+            direction: rtl;
+            text-align: right;
+            justify-content: flex-end;
+            font-weight: 700 !important;
+        }
+
+        .cell.rtl strong {
+            font-weight: 900 !important;
+        }
+
+        .cell.rtl input {
+            text-align: right;
+            font-weight: 700 !important;
+        }
+
+
+        /* Content layout inside the new 50% cells */
+        .left-content {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .right-content {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            justify-content: space-between;
+            direction: rtl;
+            /* For Farsi alignment */
+        }
+
+        .left-content strong {
+            margin-right: 10px;
+            width: 200px;
+        }
+
+        .right-content strong {
+            margin-left: 10px;
+            width: 250px;
+        }
+
+        .right-content input {
+            text-align: right;
+        }
+
+
+        .signature-row .cell-label-en {
+            width: 25% !important;
+            border-right: 3px solid #7e7d7d !important;
+            justify-content: flex-start;
+            /* Reset alignment for signature label */
+        }
+
+        .signature-row .cell-label-fa {
+            width: 75% !important;
+            justify-content: space-between;
+        }
+
+
+        .signature-row {
+            border-bottom: 1px solid #00A39C;
+            background-color: #f5f5f5;
+            padding-bottom: 30px;
+        }
+
+        .signature-col-img {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100px;
+            padding: 10px 0;
+        }
+
+        .remarks-section {
+            display: flex;
+            padding: 8px 15px;
+        }
+
+        .remarks-col {
+            width: 50%;
+            padding: 0 10px;
+            box-sizing: border-box;
+            font-size: 10.5px;
+            line-height: 1.45;
+            margin-top: 12px;
+        }
+
+        .remarks-col.farsi-rtl strong {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 900 !important;
+        }
+
+        .remarks-col.farsi-rtl p {
+            text-align: right;
+            margin: 0;
+            padding: 0;
+            font-weight: 700 !important;
+        }
+
+        #broken-border {
+            overflow: hidden;
+            position: relative;
+        }
+
+        #line1 {
+            position: absolute;
+            top: -7px;
+            left: 50%;
+            transform: translateX(-50%);
+            height:2px;
+            pointer-events: none;
+            z-index: 0;
+            background-color: #7e7d7d;
+            width: 60%;
+        }
+         #line2 {
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 2px;
+            pointer-events: none;
+            z-index: 0;
+            background-color: #7e7d7d;
+            width: 60%;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="document-container">
+
+        <div class="header-section">
+            <div class="header-col header-left">
+
+                <img id="qr-code-img" src="{{QR_CODE_URL}}" alt="QR Code"
+                    style="width: 90px; height: 90px; display: block; margin-bottom: 4px;">
+
+                <div class="logo-box" style="width: 145px; text-align: center;">
+                    Islamic Rep. of IRAN<br>
+                    Ministry of Roads & Urban<br>
+                    Development
+                </div>
+            </div>
+
+            <div class="header-col header-center">
+
+                <p style="font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    <strong>PORT(S) & MARITIME GENERAL DIRECTORATE OF HORMOZGAN PROVINCE</strong></p>
+                <p class="farsi-rtl" style="font-size: 18px;">اداره كل بنادر ودريانوردى استان هرمزگان</p>
+
+
+                <div class="main-title-block">
+                    <h1><strong>PORT CLEARANCE(PC)</strong></h1>
+                    <p class="farsi-rtl" style="font-size: 18px; margin-top: 20px;" ><strong>اجازه حرکت</strong></p>
+                </div>
+            </div>
+
+            <div class="header-col header-right farsi-rtl">
+
+                <p style="font-size: 16px; margin: 0 0 5px 0; text-align: right;">فرم E</p>
+
+                <div class="logo-box1" style="width: 140px; text-align: center; margin-top: 90px; font-weight: normal;">
+                    دولت جمهوری اسلامی ایران<br>
+                    وزارت راه و شهرسازی<br>
+                    سازمان بنادر و دریانوردی
+                </div>
+
+                <div style="height: 15px;"></div>
+            </div>
+        </div>
+
+
+        <div class="marine-affairs-row">
+            <div style="text-align: left;">
+
+                <strong>Marine affairs NO. <input type="text" value="{{MARINE_AFFAIRS_NO}}"
+                        style="width: 150px; font-weight: bold; font-size: 14px;"></strong>
+            </div>
+            <div class="farsi-rtl">
+
+                <strong>شماره امور دریایی: <input type="text" value="{{MARINE_AFFAIRS_NO_FA}}" class="rtl"
+                        style="width: 150px; font-weight: bold; font-size: 14px;"> </strong>
+            </div>
+        </div>
+
+
+        <div id="broken-border" class="data-table">
+            <div  style=" margin-top: 5px; border-top: 2px solid #7e7d7d; border-bottom: 3px solid #278081; border-right: 3px solid #278081; border-left: 3px solid #278081;">
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>SERIAL NO.</strong>
+                            <input type="text" value="{{SERIAL_NO}}" class="ltr">
+                        </div>
+                    </div>
+
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+
+                            <strong>شماره سریال</strong>
+                            <input type="text" value="{{SERIAL_NO_FA}}" class="rtl">
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>ISSUE DATE & TIME(PC)</strong>
+                            <input type="text" value="{{ISSUE_DATE_TIME}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>تاریخ و ساعت صدور</strong>
+                            <input type="text" value="{{ISSUE_DATE_TIME_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>PORT CLEARANCE NO.</strong>
+                            <input type="text" value="{{PORT_CLEARANCE_NO}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>شماره اجازه حرکت</strong>
+                            <input type="text" value="{{PORT_CLEARANCE_NO_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>CUSTOM LEAVE NO.</strong>
+                            <input type="text" value="{{CUSTOM_LEAVE_NO}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>شماره پروانه حرکت گمرک</strong>
+                            <input type="text" value="{{CUSTOM_LEAVE_NO_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+                <!-- style="box-shadow: -600px -3px 0px #278081;" -->
+
+                <div class="data-row" style="border-bottom: none;">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>AGENT</strong>
+                            <input type="text" value="{{AGENT}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>نماینده</strong>
+                            <input type="text" value="{{AGENT_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style="margin-bottom: 2px; margin-top: 2px; border: 3px solid #278081;  position: relative;">
+                <div id="line1"></div>
+                <div id="line2"></div>
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>VESSEL NAME</strong>
+                            <input type="text" value="{{VESSEL_NAME}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>نام کشتی</strong>
+                            <input type="text" value="{{VESSEL_NAME_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>ARRIVED FROM</strong>
+                            <input type="text" value="{{ARRIVED_FROM}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>وارده از بندر</strong>
+                            <input type="text" value="{{ARRIVED_FROM_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>ON DATE</strong>
+                            <input type="text" value="{{ON_DATE}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>در تاریخ</strong>
+                            <input type="text" value="{{ON_DATE_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>IMO NO/ VESSEL REG NO.</strong>
+                            <input type="text" value="{{IMO_NO}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>شماره IMO/شماره ثبت شناور</strong>
+                            <input type="text" value="{{IMO_NO_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>SHIP'S FLAG</strong>
+                            <input type="text" value="{{SHIPS_FLAG}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>پرچم شناور</strong>
+                            <input type="text" value="{{SHIPS_FLAG_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>REGISTRY PORT</strong>
+                            <input type="text" value="{{REGISTRY_PORT}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>بندر ثبت</strong>
+                            <input type="text" value="{{REGISTRY_PORT_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>GROSS TONNAGE</strong>
+                            <input type="text" value="{{GROSS_TONNAGE}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>ظرفیت ناخالص شناور</strong>
+                            <input type="text" value="{{GROSS_TONNAGE_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>MASTER</strong>
+                            <input type="text" value="{{MASTER}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>فرمانده</strong>
+                            <input type="text" value="{{MASTER_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row" style="border-bottom: none;">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>IS PERMITED TO SAIL TO</strong>
+                            <input type="text" value="{{PERMITTED_TO_SAIL}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>اجازه دارد، به طرف</strong>
+                            <input type="text" value="{{PERMITTED_TO_SAIL_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div style=" margin-top: 2px; border: 3px solid #278081;">
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>Head Of Maritime Affairs</strong>
+                            <input type="text" value="{{HEAD_OF_MARITIME}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>رئیس امور دریایی</strong>
+                            <input type="text" value="{{HEAD_OF_MARITIME_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="data-row">
+                    <div class="cell label cell-label-en">
+                        <div class="left-content">
+                            <strong>PORT</strong>
+                            <input type="text" value="{{PORT}}" class="ltr">
+                        </div>
+                    </div>
+                    <div class="cell label rtl cell-label-fa">
+                        <div class="right-content">
+                            <strong>بندر</strong>
+                            <input type="text" value="{{PORT_FA}}" class="rtl">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-row"
+                    style="min-height: 120px; align-items:center; position: relative; border-bottom: none;">
+                    {{#if IS_SIGNED}}
+                    <div class="cell label cell-label-en"
+                        style="position: relative; align-items: start; border-right: none !important ; min-height: 120px;">
+                        <strong>Signature</strong>
+                    </div>
+                    {{else}}
+                    <div class="cell label cell-label-en"
+                        style="position: relative; align-items: start; border-right: 3px solid #7e7d7d; min-height: 120px;">
+                        <strong>Signature</strong>
+                    </div>
+                    {{/if}}
+                    <div class="cell label rtl cell-label-fa" style="border-left: none; align-items: start; min-height: 120px;">
+                        <div class="right-content">
+                            <strong>امضاء</strong>
+                        </div>
+                    </div>
+                    {{#if IS_SIGNED}}
+                    <div
+                        style="position: absolute; top: 44%; left: 49%; transform: translate(-50%, -50%); z-index: 10;">
+                        <img src="{{SIGNATURE_IMAGE}}" alt="Signature"
+                            style="width: 500px; height: 220px; display: block;">
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+
+
+
+
+            <div class="remarks-section">
+
+                <div class="remarks-col">
+                    <p><strong>Remarks</strong></p>
+                    <p>This Pc is valid for 5 days from date of issue for one trip.</p>
+                    <p>Departure is forbidden while sea and weather conditions are not favorit.</p>
+                    <p style="margin-top: 10px;">To confirm the authenticity of this document, please visit our website:
+                    </p>
+                    <p>https://verify.pmo.ir/pcinquiry</p>
+                    <p style="margin-top: 10px;font-weight: bold;">This document has been issued electronically and does
+                        not need any signature and stamp</p>
+                </div>
+
+                <div class="remarks-col farsi-rtl">
+                    <p><strong>توزیع نسخ : نماینده کشتی / کنترل ترافیک دریایی / خدمات اسناد دریایی</strong></p>
+                    <p>این اجازه حرکت از تاریخ صدور به مدت ۵ روز برای یک سفر اعتبار دارد.</p>
+                    <p>در صورت نامساعد بودن شرایط جوی، خروج مجاز نخواهد بود.</p>
+                    <p style="margin-top: 10px;">جهت اطمینان از صحت اجازه حرکت به آدرس زیر مراجعه نمایید:</p>
+                    <p>https://verify.pmo.ir/pcinquiry</p>
+                    <p style="margin-top: 10px;font-weight: bold;">این اجازه حرکت به صورت الکترونیکی صادر شده است و نیاز
+                        به مهر و امضا ندارد</p>
+                </div>
+            </div>
+
+        </div>
+
+</body>
+
+</html>
