@@ -31,14 +31,18 @@
             background: white;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            padding: 40px;
+            padding: 30px 0;
+        }
+
+        #content-area {
+            padding: 0 40px;
         }
 
         .title {
             font-size: 24px;
             font-weight: 600;
             color: #4c95ee;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
             text-align: center;
         }
 
@@ -50,7 +54,7 @@
             border-bottom: 2px solid #e1f1cb;
             border-radius: 8px;
             padding: 20px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             display: flex;
             align-items: flex-start;
             gap: 15px;
@@ -88,7 +92,7 @@
 
         .table-wrapper {
             border-radius: 10px;
-            overflow: hidden;
+            /* overflow: hidden; */
             border: 1px solid #d0d0d0;
         }
 
@@ -153,9 +157,12 @@
         @media (max-width: 600px) {
             .container {
                 margin: 40px;
-                padding: 30px;
+                padding: 20px 0;
             }
 
+            #content-area {
+                padding: 0 30px;
+            }
             .title {
                 font-size: 20px;
             }
@@ -173,6 +180,7 @@
 
     <div class="container" id="main-content">
         <h1 class="title" id="page-title">EXIT PERMIT Verification</h1>
+        <div style="background-color: #ececec; height: 1px; margin-bottom: 15px;"></div>
         <div id="content-area">
             <!-- Content will be loaded here -->
         </div>
