@@ -143,7 +143,7 @@ app.get('/', (req, res) => {
                 update: 'PUT /api/documents/:id',
                 delete: 'DELETE /api/documents/:id',
                 expire: 'PUT /api/documents/:id/expire',
-                verify: 'GET /api/documents/verify/:serialNo'
+                verify: 'GET /api/documents/verify/:id'
             },
             legacy: {
                 generatePC: 'POST /api/generate-port-clearance',

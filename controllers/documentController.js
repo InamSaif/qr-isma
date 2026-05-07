@@ -90,19 +90,6 @@ exports.createDocument = async (req, res) => {
             });
         }
 
-        // Check if serial number already exists
-        const existingDoc = await Document.findOne({ 
-            serialNo: serialNo,
-            status: { $ne: 'deleted' }
-        });
-
-        if (existingDoc) {
-            return res.status(400).json({
-                success: false,
-                error: 'Document with this serial/certificate number already exists'
-            });
-        }
-
         console.log('Generating Port Clearance PDF for user:', req.user.id);
         console.log('Form Data:', formData);
 
@@ -163,22 +150,6 @@ exports.updateDocument = async (req, res) => {
 
         // Use PERMIT_NUMBER as serial number (Port Clearance), fallback to CERTIFICATE_NUMBER (Sail Certificate), then SERIAL_NO (legacy)
         const newSerialNo = formData.PERMIT_NUMBER || formData.CERTIFICATE_NUMBER || formData.SERIAL_NO;
-
-        // If serial number is being changed, check if it already exists
-        if (newSerialNo && newSerialNo !== document.serialNo) {
-            const existingDoc = await Document.findOne({ 
-                serialNo: newSerialNo,
-                status: { $ne: 'deleted' },
-                _id: { $ne: document._id }
-            });
-
-            if (existingDoc) {
-                return res.status(400).json({
-                    success: false,
-                    error: 'Document with this serial/certificate number already exists'
-                });
-            }
-        }
 
         // Delete old PDF file
         try {
@@ -292,12 +263,12 @@ exports.expireDocument = async (req, res) => {
 };
 
 // @desc    Verify document (for QR code scanning)
-// @route   GET /api/documents/verify/:serialNo
+// @route   GET /api/documents/verify/:id
 // @access  Public
 exports.verifyDocument = async (req, res) => {
     try {
-        const document = await Document.findOne({ 
-            serialNo: req.params.serialNo 
+        const document = await Document.findOne({
+            _id: req.params.id
         });
 
         if (!document) {

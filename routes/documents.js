@@ -13,7 +13,7 @@ const {
 const { protect } = require('../middleware/auth');
 
 // Public routes
-router.get('/verify/:serialNo', verifyDocument);
+router.get('/verify/:id', verifyDocument);
 router.get('/public/:id', getPublicDocument);
 
 // Protected routes
