@@ -41,7 +41,7 @@
         .title {
             font-size: 24px;
             font-weight: 600;
-            color: #4c95ee;
+            color: #3b91ff;
             margin-bottom: 15px;
             text-align: center;
         }
@@ -75,7 +75,7 @@
             font-size: 16px;
             color: #000;
             margin-bottom: 5px;
-            font-weight: 500;
+            font-weight: 400;
         }
 
         .status-content p {
@@ -92,12 +92,12 @@
 
         .table-wrapper {
             border-radius: 10px;
-            /* overflow: hidden; */
-            border: 1px solid #d0d0d0;
+            overflow-x: auto;
+            border: 1px solid #f0f0f0;
         }
 
         .data-table tr {
-            border-bottom: 1px solid #d0d0d0;
+            border-bottom: 1px solid #f0f0f0;
         }
 
         .data-table tr:last-child {
@@ -105,9 +105,9 @@
         }
 
         .data-table td {
-            padding: 16px;
+            padding: 16px 24px;
             font-size: 14px;
-            border-right: 1px solid #d0d0d0;
+            border-right: 1px solid #f0f0f0;
         }
 
         .data-table td:last-child {
@@ -118,13 +118,15 @@
             color: #666;
             font-weight: 500;
             width: 50%;
+            min-width: max-content;
+            white-space: nowrap;
             background-color: #fafafa;
             border-left: none;
         }
 
         .data-table td:last-child {
-            color: #333;
-            font-weight: 600;
+            color: rgba(0, 0, 0, 0.88);
+            font-weight: 400;
             text-align: left;
             background-color: #ffffff;
             width: 50%;
@@ -168,7 +170,7 @@
             }
 
             .data-table td {
-                padding: 14px;
+                padding: 16px 24px;
             }
         }
     </style>
@@ -180,7 +182,7 @@
 
     <div class="container" id="main-content">
         <h1 class="title" id="page-title">EXIT PERMIT Verification</h1>
-        <div style="background-color: #ececec; height: 1px; margin-bottom: 15px;"></div>
+        <div style="background-color: #f0f0f0; height: 1px; margin-bottom: 15px;"></div>
         <div id="content-area">
             <!-- Content will be loaded here -->
         </div>

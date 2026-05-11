@@ -5,6 +5,61 @@ const QRCode = require('qrcode');
 const { PDFDocument } = require('pdf-lib');
 const { v4: uuidv4 } = require('uuid');
 
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+function pad2(n) { return String(n).padStart(2, '0'); }
+
+function formatDateWithMonthName(value) {
+    if (!value && value !== 0) return value;
+
+    // Date object
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+        const d = value;
+        const hh = pad2(d.getHours());
+        const mm = pad2(d.getMinutes());
+        if (hh === '00' && mm === '00') {
+            return `${pad2(d.getDate())}-${MONTH_NAMES[d.getMonth()]}-${d.getFullYear()}`;
+        }
+        return `${pad2(d.getDate())}-${MONTH_NAMES[d.getMonth()]}-${d.getFullYear()} ${hh}:${mm}`;
+    }
+
+    // String input - accept DD/MM/YYYY or DD-MM-YYYY with optional time HH:mm(:ss)
+    if (typeof value === 'string') {
+        const s = value.trim();
+        if (!s) return value;
+
+        const dmy = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/);
+        if (dmy) {
+            const day = Number(dmy[1]);
+            const month = Number(dmy[2]);
+            const year = Number(dmy[3]);
+            const hh = dmy[4] ? pad2(Number(dmy[4])) : null;
+            const mm = dmy[5] ? pad2(Number(dmy[5])) : null;
+            const ss = dmy[6] ? pad2(Number(dmy[6])) : null;
+            if (month >= 1 && month <= 12) {
+                const base = `${pad2(day)}-${MONTH_NAMES[month - 1]}-${year}`;
+                if (hh && mm) {
+                    if (hh === '00' && mm === '00') return base;
+                    return ss ? `${base} ${hh}:${mm}:${ss}` : `${base} ${hh}:${mm}`;
+                }
+                return base;
+            }
+        }
+
+        // fallback to Date parse
+        const parsed = new Date(s);
+        if (!Number.isNaN(parsed.getTime())) {
+            const ph = pad2(parsed.getHours());
+            const pm = pad2(parsed.getMinutes());
+            const base = `${pad2(parsed.getDate())}-${MONTH_NAMES[parsed.getMonth()]}-${parsed.getFullYear()}`;
+            if (ph === '00' && pm === '00') return base;
+            return `${base} ${ph}:${pm}`;
+        }
+    }
+
+    return value;
+}
+
 /**
  * Fill template with form data
  */
@@ -13,14 +68,7 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
 
     // Format current date/time for printed timestamp
     const now = new Date();
-    const printedOn = now.toLocaleString('en-GB', { 
-        day: '2-digit', 
-        month: '2-digit', 
-        year: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit',
-        hour12: false 
-    }).replace(',', '');
+    const printedOn = formatDateWithMonthName(now);
 
     
 
@@ -46,7 +94,7 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
     const placeholders = {
         // Port Clearance specific fields
         'PERMIT_NUMBER': formData.PERMIT_NUMBER || '',
-        'ISSUANCE_DATE': formData.ISSUANCE_DATE || '',
+        'ISSUANCE_DATE': formData.ISSUANCE_DATE ? formatDateWithMonthName(formData.ISSUANCE_DATE) : '',
         'VESSEL_NAME': formData.VESSEL_NAME || '',
         'VESSEL_IMO': formData.VESSEL_IMO || '',
         'FLAG': formData.FLAG || '',
@@ -55,8 +103,8 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
         'VESSEL_TYPE': formData.VESSEL_TYPE || '',
         'VESSEL_GRT': formData.VESSEL_GRT || '',
         'AGENCY_NAME': formData.AGENCY_NAME || '',
-        'ARRIVAL_DATE': formData.ARRIVAL_DATE || '',
-        'DEPARTURE_DATE': formData.DEPARTURE_DATE || '',
+        'ARRIVAL_DATE': formData.ARRIVAL_DATE ? formatDateWithMonthName(formData.ARRIVAL_DATE) : '',
+        'DEPARTURE_DATE': formData.DEPARTURE_DATE ? formatDateWithMonthName(formData.DEPARTURE_DATE) : '',
         
         // Sail Certificate specific fields
         'CERTIFICATE_NUMBER': formData.CERTIFICATE_NUMBER || '',
@@ -75,7 +123,7 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
         'CAPTAIN_NAME_AR': formData.CAPTAIN_NAME_AR || '',
         'ETD': formData.ETD || '',
         'CUSTOMS_REMARKS': formData.CUSTOMS_REMARKS || '',
-        'PRINTED_ON': formData.PRINTED_ON || printedOn,
+        'PRINTED_ON': formData.PRINTED_ON ? formatDateWithMonthName(formData.PRINTED_ON) : printedOn,
         'IMO_NUMBER': formData.IMO_NUMBER || '',
         'TOTAL_PAGES_COUNT': totalPages.toString(),
         
@@ -134,10 +182,10 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
               <td rowspan="2" class="text-center crew-cell rtl">${crew.nameAr || ''}</td>
               <td class="text-center crew-cell">${crew.positionEn || ''}</td>
               <td class="text-center crew-cell">${crew.nationalityEn || ''}</td>
-              <td rowspan="2" class="text-center crew-cell">${crew.dateOfBirth || ''}</td>
+              <td rowspan="2" class="text-center crew-cell">${formatDateWithMonthName(crew.dateOfBirth) || ''}</td>
               <td rowspan="2" class="crew-cell td-thick-right">${crew.travelDocRef || ''}</td>
-              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${crew.dateOfIssue || ''}</td>
-              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${crew.dateOfExpiry || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${formatDateWithMonthName(crew.dateOfIssue) || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${formatDateWithMonthName(crew.dateOfExpiry) || ''}</td>
               <td rowspan="2" class="crew-cell td-thick-left">${crew.seamanBook || ''}</td>
             </tr>
             <tr>
@@ -169,10 +217,10 @@ function fillTemplate(templateHtml, formData, qrCodeUrl = null, signatureImage =
               <td rowspan="2" class="text-center crew-cell rtl">${crew.nameAr || ''}</td>
               <td class="text-center crew-cell">${crew.positionEn || ''}</td>
               <td class="text-center crew-cell">${crew.nationalityEn || ''}</td>
-              <td rowspan="2" class="text-center crew-cell">${crew.dateOfBirth || ''}</td>
+              <td rowspan="2" class="text-center crew-cell">${formatDateWithMonthName(crew.dateOfBirth) || ''}</td>
               <td rowspan="2" class="crew-cell td-thick-right">${crew.travelDocRef || ''}</td>
-              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${crew.dateOfIssue || ''}</td>
-              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${crew.dateOfExpiry || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${formatDateWithMonthName(crew.dateOfIssue) || ''}</td>
+              <td rowspan="2" class="crew-cell td-thick-right td-thick-left">${formatDateWithMonthName(crew.dateOfExpiry) || ''}</td>
               <td rowspan="2" class="crew-cell td-thick-left">${crew.seamanBook || ''}</td>
             </tr>
             <tr>
