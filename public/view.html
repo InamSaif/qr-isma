@@ -84,6 +84,10 @@
             line-height: 1.4;
         }
 
+        .no-wrap {
+            white-space: nowrap;
+        }
+
         .data-table {
             width: 100%;
             border-collapse: collapse;
@@ -92,7 +96,7 @@
 
         .table-wrapper {
             border-radius: 10px;
-            overflow-x: auto;
+            overflow: visible;
             border: 1px solid #f0f0f0;
         }
 
@@ -158,8 +162,9 @@
 
         @media (max-width: 600px) {
             .container {
-                margin: 40px;
+                margin: 0 40px;
                 padding: 20px 0;
+
             }
 
             #content-area {
@@ -193,7 +198,7 @@
             en: {
                 title: "EXIT PERMIT Verification",
                 validStatus: "VALID EXIT PERMIT",
-                validMessage: "This exit permit is currently valid and active.",
+                validMessage: "<span class=\"no-wrap\">This exit permit is currently valid</span><br>and active.",
                 permitId: "Permit ID",
                 vessel: "Vessel",
                 imo: "IMO",
@@ -206,7 +211,7 @@
             ar: {
                 title: "التحقق من رخصة المغادرة",
                 validStatus: "رخصة المغادرة سارية",
-                validMessage: "رخصة المغادرة هذه سارية وفعالة حالياً.",
+                validMessage: "<span class=\"no-wrap\">رخصة المغادرة هذه سارية</span><br>وفعالة حالياً.",
                 permitId: "رقم الرخصة",
                 vessel: "السفينة",
                 imo: "رقم منظمة البحرية الدولية",
